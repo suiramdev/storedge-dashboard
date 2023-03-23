@@ -19,7 +19,7 @@ export const productsColumns = [
           indeterminate={table.getIsSomeRowsSelected()}
           onChange={table.getToggleAllRowsSelectedHandler()}
         />
-        <div className="w-[48px]" />
+        <div className="w-12" />
         <span>Name</span>
       </div>
     ),
@@ -29,8 +29,11 @@ export const productsColumns = [
           checked={row.getIsSelected()}
           onChange={row.getToggleSelectedHandler()}
         />
-        <div className="w-[48px]">
-          <img src="https://via.placeholder.com/48" className="rounded-lg" />
+        <div className="w-12">
+          <img
+            src="https://via.placeholder.com/48"
+            className="aspect-square h-full rounded-lg"
+          />
         </div>
         <span>{getValue()}</span>
       </div>

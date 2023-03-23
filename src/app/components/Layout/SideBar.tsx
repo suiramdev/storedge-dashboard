@@ -36,8 +36,8 @@ export default function SideBar() {
   ];
 
   return (
-    <div className="flex w-[208px] flex-col border-r border-gray-200 bg-white px-6">
-      <div className="flex h-[72px] items-center py-2">
+    <div className="flex w-64 flex-col border-r border-gray-200 bg-white px-6">
+      <div className="flex h-16 items-center py-2">
         <button className="flex w-full items-center justify-between rounded p-2 text-lg font-semibold hover:bg-gray-50">
           Demo store
           <HiSelector size={16} />
@@ -50,8 +50,10 @@ export default function SideBar() {
               <li key={link.href}>
                 <a
                   className={clsx(
-                    "flex items-center gap-2 rounded p-2 font-medium hover:bg-gray-50",
-                    usePathname() === link.href && "bg-gray-50 text-indigo-500"
+                    "flex items-center gap-2 rounded p-2 font-medium",
+                    usePathname() === link.href
+                      ? "bg-indigo-50 text-indigo-600"
+                      : "text-gray-500 hover:bg-gray-50"
                   )}
                   href={link.href}
                 >
