@@ -1,11 +1,11 @@
 "use client";
 
 import {
-  HiOutlineCog,
-  HiOutlineHome,
-  HiOutlineSelector,
-  HiOutlineShoppingCart,
-  HiOutlineTag,
+  HiCog,
+  HiHome,
+  HiSelector,
+  HiShoppingCart,
+  HiTag,
 } from "react-icons/hi";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
@@ -15,22 +15,22 @@ export default function SideBar() {
   const links = [
     {
       href: "/",
-      icon: HiOutlineHome,
+      icon: HiHome,
       name: "Home",
     },
     {
       href: "/products",
-      icon: HiOutlineShoppingCart,
+      icon: HiShoppingCart,
       name: "Products",
     },
     {
       href: "/orders",
-      icon: HiOutlineTag,
+      icon: HiTag,
       name: "Orders",
     },
     {
       href: "/settings",
-      icon: HiOutlineCog,
+      icon: HiCog,
       name: "Settings",
     },
   ];
@@ -40,7 +40,7 @@ export default function SideBar() {
       <div className="flex h-[72px] items-center py-2">
         <button className="flex w-full items-center justify-between rounded p-2 text-lg font-semibold hover:bg-gray-50">
           Demo store
-          <HiOutlineSelector size={16} />
+          <HiSelector size={16} />
         </button>
       </div>
       <div className="flex flex-1 flex-col justify-between pt-6 pb-2">

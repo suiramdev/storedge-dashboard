@@ -1,12 +1,7 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import Checkbox from "@/app/components/Checkbox";
 import Dropdown from "@/app/components/Dropdown";
-import {
-  HiArchive,
-  HiOutlineDotsVertical,
-  HiPencil,
-  HiTrash,
-} from "react-icons/hi";
+import { HiArchive, HiDotsVertical, HiPencil } from "react-icons/hi";
 
 export type ordersRow = {
   id: string;
@@ -56,7 +51,7 @@ export const ordersColumns = [
     cell: () => (
       <div className="flex items-center justify-end">
         <Dropdown
-          button={<HiOutlineDotsVertical className="text-gray-500" size={24} />}
+          button={<HiDotsVertical className="text-gray-500" size={24} />}
         >
           <Dropdown.Item>
             <HiPencil size={16} />

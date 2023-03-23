@@ -1,4 +1,4 @@
-import { HiOutlinePlus } from "react-icons/hi";
+import { HiPlus } from "react-icons/hi";
 import { OrdersTable } from "@/app/components/Order";
 
 const data = [
@@ -16,7 +16,7 @@ export default function Page() {
       <div className="mb-6 flex justify-between">
         <h1>Orders</h1>
         <button className="btn btn-primary">
-          <HiOutlinePlus size={16} />
+          <HiPlus size={16} />
           Add an order
         </button>
       </div>
