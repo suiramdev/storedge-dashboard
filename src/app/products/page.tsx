@@ -22,7 +22,7 @@ export default function Page() {
       <div className="mb-6 flex justify-between">
         <h1>Products</h1>
         <button className="btn btn-primary">
-          <HiOutlinePlus size={24} />
+          <HiOutlinePlus size={16} />
           Add a product
         </button>
       </div>

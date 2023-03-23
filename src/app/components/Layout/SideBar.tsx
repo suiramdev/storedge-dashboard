@@ -40,12 +40,12 @@ export default function SideBar() {
       <div className="flex h-[72px] items-center py-2">
         <button className="flex w-full items-center justify-between rounded p-2 text-lg font-semibold hover:bg-gray-50">
           Demo store
-          <HiOutlineSelector size={24} />
+          <HiOutlineSelector size={16} />
         </button>
       </div>
       <div className="flex flex-1 flex-col justify-between pt-6 pb-2">
         <nav className="border-b border-gray-200 pb-4">
-          <ul className="flex flex-col gap-2">
+          <ul className="flex flex-col gap-1">
             {links.map((link) => (
               <li key={link.href}>
                 <a
@@ -55,7 +55,7 @@ export default function SideBar() {
                   )}
                   href={link.href}
                 >
-                  {<link.icon size={24} />}
+                  {<link.icon size={16} />}
                   {link.name}
                 </a>
               </li>

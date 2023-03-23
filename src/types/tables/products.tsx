@@ -45,17 +45,19 @@ export const productsColumns = [
     id: "more",
     cell: () => (
       <div className="flex items-center justify-end">
-        <Dropdown button={<HiOutlineDotsVertical size={24} />}>
+        <Dropdown
+          button={<HiOutlineDotsVertical className="text-gray-500" size={24} />}
+        >
           <Dropdown.Item>
-            <HiPencil />
+            <HiPencil size={16} />
             Edit
           </Dropdown.Item>
           <Dropdown.Item>
-            <HiArchive />
+            <HiArchive size={16} />
             Archive
           </Dropdown.Item>
           <Dropdown.Item>
-            <HiTrash />
+            <HiTrash size={16} />
             Delete
           </Dropdown.Item>
         </Dropdown>
