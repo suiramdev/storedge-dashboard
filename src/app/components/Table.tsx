@@ -43,8 +43,11 @@ export default function Table({ data, columns }: Props) {
           <tr
             key={row.id}
             className={clsx(
-              row.getIsSelected() && "!bg-indigo-50",
-              data[row.index].href && "hover:cursor-pointer hover:bg-gray-50"
+              row.getIsSelected() && "bg-indigo-50",
+              data[row.index].href &&
+                (row.getIsSelected()
+                  ? "hover:cursor-pointer hover:bg-indigo-100"
+                  : "hover:cursor-pointer hover:bg-gray-50")
             )}
           >
             {row.getVisibleCells().map((cell) => (
