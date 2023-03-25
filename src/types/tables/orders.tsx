@@ -5,3 +5,4 @@ export interface OrderRow extends Row {
   customer: string;
   total: number;
   status: string;
+}
