@@ -13,7 +13,7 @@ const columnHelper = createColumnHelper<ProductRow>();
 export const columns: Column<ProductRow>[] = [
   columnHelper.accessor("name", {
     header: ({ table }) => (
-      <div className="flex items-center gap-12">
+      <div className="flex items-center gap-6 text-sm text-gray-500">
         <Checkbox
           checked={table.getIsAllRowsSelected()}
           indeterminate={table.getIsSomeRowsSelected()}
@@ -24,7 +24,7 @@ export const columns: Column<ProductRow>[] = [
       </div>
     ),
     cell: ({ row, getValue }) => (
-      <div className="flex items-center gap-12">
+      <div className="flex items-center gap-6">
         <Checkbox
           checked={row.getIsSelected()}
           onChange={row.getToggleSelectedHandler()}
@@ -32,7 +32,7 @@ export const columns: Column<ProductRow>[] = [
         <div className="w-12">
           <img
             src="https://via.placeholder.com/48"
-            className="aspect-square h-full rounded-lg"
+            className="aspect-square h-full rounded"
           />
         </div>
         <span>{getValue()}</span>

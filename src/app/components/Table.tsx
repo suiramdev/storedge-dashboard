@@ -44,8 +44,7 @@ export default function Table({ data, columns }: Props) {
             key={row.id}
             className={clsx(
               row.getIsSelected() && "!bg-indigo-50",
-              row.getValue("href") != null &&
-                "hover:cursor-pointer hover:bg-gray-50"
+              data[row.index].href && "hover:cursor-pointer hover:bg-gray-50"
             )}
           >
             {row.getVisibleCells().map((cell) => (
@@ -53,8 +52,7 @@ export default function Table({ data, columns }: Props) {
                 key={cell.id}
                 className="px-6 py-2"
                 onClick={() =>
-                  row.getValue("href") != null &&
-                  router.replace(row.getValue("href"))
+                  data[row.index].href && router.replace(row.getValue("href"))
                 }
               >
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}

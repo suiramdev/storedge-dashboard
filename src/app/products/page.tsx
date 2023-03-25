@@ -6,14 +6,17 @@ const data: ProductRow[] = [
   {
     id: "1234",
     name: "Wool turtleneck jumper",
+    href: "/products/1234",
   },
   {
     id: "1234",
     name: "Wool turtleneck jumper",
+    href: "/products/1234",
   },
   {
     id: "1234",
     name: "Wool turtleneck jumper",
+    href: "/products/1234",
   },
 ];
 
