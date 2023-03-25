@@ -19,22 +19,15 @@ export default function NavLink({ href, icon, name }: Props) {
     <li>
       <Link
         className={clsx(
-          "relative flex items-center gap-2 px-6 py-2 text-sm font-semibold hover:bg-gray-100",
+          "relative flex items-center gap-2 px-6 py-2 text-sm font-semibold text-gray-400 hover:bg-gray-100",
           pathname == href && [
             "before:absolute before:top-0 before:left-0 before:h-full before:w-0.5 before:bg-indigo-600",
-            "bg-indigo-50 text-indigo-600 hover:bg-indigo-100",
+            "bg-indigo-50 !text-indigo-600 hover:bg-indigo-100",
           ]
         )}
         href={href}
       >
-        {Icon && (
-          <Icon
-            size={24}
-            className={clsx(
-              pathname == href ? "fill-indigo-300" : "fill-gray-300"
-            )}
-          />
-        )}
+        {Icon && <Icon size={24} />}
         {name}
       </Link>
     </li>
