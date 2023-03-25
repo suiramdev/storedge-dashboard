@@ -1,3 +1,5 @@
+"use client";
+
 import { ChangeEvent, useEffect, useRef } from "react";
 
 type Props = {
@@ -20,7 +22,7 @@ export default function Checkbox({ checked, indeterminate, onChange }: Props) {
     <input
       ref={checkboxRef}
       type="checkbox"
-      className="h-6 w-6 rounded-lg border-gray-200 bg-white checked:bg-indigo-500 indeterminate:bg-indigo-500 hover:bg-gray-50 checked:hover:bg-indigo-600 hover:indeterminate:bg-indigo-600 focus:ring-indigo-600 focus:checked:bg-indigo-600"
+      className="h-6 w-6 rounded border-gray-200 bg-white checked:bg-indigo-600 indeterminate:bg-indigo-600 hover:bg-gray-50 checked:hover:bg-indigo-700 hover:indeterminate:bg-indigo-700 focus:ring-indigo-700 focus:checked:bg-indigo-700"
       onChange={onChange}
       onClick={(e) => e.stopPropagation()}
     />

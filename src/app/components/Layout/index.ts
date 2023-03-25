@@ -1,4 +1,4 @@
-import SideBar from "./SideBar";
-import TopBar from "./TopBar";
+import Topbar from "./Topbar";
+import Sidebar from "./Sidebar";
 
-export { SideBar, TopBar };
+export { Topbar, Sidebar };

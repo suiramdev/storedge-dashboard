@@ -1,10 +1,10 @@
 @layer components {
   .btn {
-    @apply flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold;
+    @apply flex items-center gap-2 rounded px-4 py-2 text-sm font-semibold;
   }
 
   .btn-primary {
-    @apply bg-indigo-500 text-white hover:bg-indigo-600 focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2;
+    @apply bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2;
   }
 
   .btn-secondary {

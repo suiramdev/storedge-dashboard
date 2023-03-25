@@ -1,7 +1,8 @@
 import { HiPlus } from "react-icons/hi";
-import { ProductsTable } from "@/app/components/Product";
+import { ProductRow } from "@/types/tables/products";
+import { ProductsTable } from "../components/Product";
 
-const data = [
+const data: ProductRow[] = [
   {
     id: "1234",
     name: "Wool turtleneck jumper",
@@ -18,9 +19,9 @@ const data = [
 
 export default function Page() {
   return (
-    <section>
-      <div className="mb-6 flex justify-between">
-        <h1>Products</h1>
+    <section className="flex flex-col rounded-sm border border-gray-200 bg-white">
+      <div className="flex justify-between p-6">
+        <h2>All Products</h2>
         <button className="btn btn-primary">
           <HiPlus size={16} />
           Add a product

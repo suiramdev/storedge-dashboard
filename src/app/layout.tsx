@@ -1,5 +1,5 @@
 import "@/styles/globals.css";
-import { SideBar, TopBar } from "@/app/components/Layout";
+import { Sidebar, Topbar } from "@/app/components/Layout";
 
 export const metadata = {
   title: "Storedge",
@@ -12,11 +12,13 @@ type Props = {
 export default function RootLayout({ children }: Props) {
   return (
     <html lang="en">
-      <body className="flex">
-        <SideBar />
-        <div className="flex flex-1 flex-col">
-          <TopBar />
-          <div className="px-16 py-6">{children}</div>
+      <body className="flex flex-col">
+        <Topbar />
+        <div className="flex flex-1">
+          <Sidebar />
+          <div className="flex flex-1 flex-col">
+            <div className="p-6">{children}</div>
+          </div>
         </div>
       </body>
     </html>

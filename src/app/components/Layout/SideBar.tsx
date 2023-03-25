@@ -1,69 +1,38 @@
 "use client";
 
 import {
+  HiChartSquareBar,
   HiCog,
-  HiHome,
-  HiSelector,
+  HiReceiptTax,
   HiShoppingCart,
+  HiSupport,
   HiTag,
+  HiTemplate,
+  HiTicket,
+  HiUserGroup,
 } from "react-icons/hi";
-import { usePathname } from "next/navigation";
-import clsx from "clsx";
+import NavMenu, { NavLink } from "./NavMenu";
 
 export default function SideBar() {
-  const links = [
-    {
-      href: "/",
-      icon: HiHome,
-      name: "Home",
-    },
-    {
-      href: "/products",
-      icon: HiShoppingCart,
-      name: "Products",
-    },
-    {
-      href: "/orders",
-      icon: HiTag,
-      name: "Orders",
-    },
-    {
-      href: "/settings",
-      icon: HiCog,
-      name: "Settings",
-    },
-  ];
-
   return (
-    <div className="flex w-64 flex-col bg-indigo-700 px-4 text-indigo-200">
-      <div className="flex h-16 items-center py-2">
-        <button className="flex w-full items-center justify-between rounded p-2 text-lg font-semibold hover:bg-black/10">
-          Demo store
-          <HiSelector size={16} />
-        </button>
+    <div className="flex w-64 flex-col justify-between border-r border-r-gray-200 py-6">
+      <div className="flex flex-col gap-12">
+        <NavMenu title="Management">
+          <NavLink href="/" name="Dashboard" icon={HiTemplate} />
+          <NavLink href="/products" name="Products" icon={HiShoppingCart} />
+          <NavLink href="/orders" name="Orders" icon={HiTag} />
+          <NavLink href="/customers" name="Customers" icon={HiUserGroup} />
+          <NavLink href="/settings" name="Settings" icon={HiCog} />
+        </NavMenu>
+        <NavMenu title="Marketing">
+          <NavLink href="/coupons" name="Coupons" icon={HiTicket} />
+          <NavLink href="/discounts" name="Discounts" icon={HiReceiptTax} />
+          <NavLink href="/campaigns" name="Campaigns" icon={HiChartSquareBar} />
+        </NavMenu>
       </div>
-      <div className="flex flex-1 flex-col justify-between pt-6 pb-2">
-        <nav>
-          <ul className="flex flex-col gap-1">
-            {links.map((link) => (
-              <li key={link.href}>
-                <a
-                  className={clsx(
-                    "flex items-center gap-2 rounded p-2 font-medium",
-                    usePathname() === link.href
-                      ? "bg-black/20 text-white"
-                      : "hover:bg-black/10"
-                  )}
-                  href={link.href}
-                >
-                  {<link.icon size={16} />}
-                  {link.name}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </div>
+      <NavMenu>
+        <NavLink href="/support" name="Support" icon={HiSupport} />
+      </NavMenu>
     </div>
   );
 }

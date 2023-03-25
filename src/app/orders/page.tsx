@@ -12,9 +12,9 @@ const data = [
 
 export default function Page() {
   return (
-    <section>
-      <div className="mb-6 flex justify-between">
-        <h1>Orders</h1>
+    <section className="flex flex-col rounded-sm border border-gray-200 bg-white">
+      <div className="flex justify-between p-6">
+        <h2>All Orders</h2>
         <button className="btn btn-primary">
           <HiPlus size={16} />
           Add an order

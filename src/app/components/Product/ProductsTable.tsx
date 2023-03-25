@@ -1,30 +1,73 @@
 "use client";
 
-import { productsColumns, productsRow } from "@/types/tables/products";
-import { getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import { ProductRow } from "@/types/tables/products";
+import { Column } from "@/types/tables/defaults";
+import { createColumnHelper } from "@tanstack/react-table";
+import Checkbox from "@/app/components/Checkbox";
+import Dropdown from "@/app/components/Dropdown";
+import { HiArchive, HiDotsVertical, HiPencil, HiTrash } from "react-icons/hi";
 import Table from "@/app/components/Table";
 
+const columnHelper = createColumnHelper<ProductRow>();
+
+export const columns: Column<ProductRow>[] = [
+  columnHelper.accessor("name", {
+    header: ({ table }) => (
+      <div className="flex items-center gap-12">
+        <Checkbox
+          checked={table.getIsAllRowsSelected()}
+          indeterminate={table.getIsSomeRowsSelected()}
+          onChange={table.getToggleAllRowsSelectedHandler()}
+        />
+        <div className="w-12" />
+        <span>Name</span>
+      </div>
+    ),
+    cell: ({ row, getValue }) => (
+      <div className="flex items-center gap-12">
+        <Checkbox
+          checked={row.getIsSelected()}
+          onChange={row.getToggleSelectedHandler()}
+        />
+        <div className="w-12">
+          <img
+            src="https://via.placeholder.com/48"
+            className="aspect-square h-full rounded-lg"
+          />
+        </div>
+        <span>{getValue()}</span>
+      </div>
+    ),
+  }),
+  columnHelper.display({
+    id: "more",
+    cell: () => (
+      <div className="flex items-center justify-end">
+        <Dropdown
+          button={<HiDotsVertical className="text-gray-500" size={24} />}
+        >
+          <Dropdown.Item>
+            <HiPencil size={16} />
+            Edit
+          </Dropdown.Item>
+          <Dropdown.Item>
+            <HiArchive size={16} />
+            Archive
+          </Dropdown.Item>
+          <Dropdown.Item>
+            <HiTrash size={16} />
+            Delete
+          </Dropdown.Item>
+        </Dropdown>
+      </div>
+    ),
+  }),
+];
+
 type Props = {
-  data: productsRow[];
+  data: ProductRow[];
 };
 
 export default function ProductsTable({ data }: Props) {
-  const table = useReactTable({
-    data,
-    columns: productsColumns,
-    getCoreRowModel: getCoreRowModel(),
-  });
-
-  return (
-    <div className="flex flex-col gap-4 rounded border border-gray-200 bg-white p-6 shadow">
-      <Table table={table} rowsHref={(row) => `/products/${row.original.id}`} />
-      {(table.getIsSomeRowsSelected() || table.getIsAllRowsSelected()) && (
-        <div className="flex gap-2">
-          <button className="btn btn-secondary">
-            Delete selected products
-          </button>
-        </div>
-      )}
-    </div>
-  );
+  return <Table data={data} columns={columns} />;
 }

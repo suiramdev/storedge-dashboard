@@ -1,16 +1,26 @@
 "use client";
 
-import { Table as TTable, Row, flexRender } from "@tanstack/react-table";
+import { Row, Column } from "@/types/tables/defaults";
+import {
+  flexRender,
+  useReactTable,
+  getCoreRowModel,
+} from "@tanstack/react-table";
 import clsx from "clsx";
 import { useRouter } from "next/navigation";
 
 type Props = {
-  table: TTable<any>;
-  rowsHref?: (row: Row<any>) => string;
+  data: Row[];
+  columns: Column[];
 };
 
-export default function Table({ table, rowsHref }: Props) {
+export default function Table({ data, columns }: Props) {
   const router = useRouter();
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
 
   return (
     <table className="divide-y border-gray-200 text-left">
@@ -34,14 +44,18 @@ export default function Table({ table, rowsHref }: Props) {
             key={row.id}
             className={clsx(
               row.getIsSelected() && "!bg-indigo-50",
-              rowsHref && "hover:cursor-pointer hover:bg-gray-50"
+              row.getValue("href") != null &&
+                "hover:cursor-pointer hover:bg-gray-50"
             )}
           >
             {row.getVisibleCells().map((cell) => (
               <td
                 key={cell.id}
                 className="px-6 py-2"
-                onClick={() => rowsHref && router.replace(rowsHref(row))}
+                onClick={() =>
+                  row.getValue("href") != null &&
+                  router.replace(row.getValue("href"))
+                }
               >
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </td>
