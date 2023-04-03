@@ -55,7 +55,7 @@ export default function Table({ data, columns }: Props) {
                 key={cell.id}
                 className="px-6 py-2"
                 onClick={() =>
-                  data[row.index].href && router.replace(row.getValue("href"))
+                  data[row.index].href && router.replace(data[row.index].href!)
                 }
               >
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}

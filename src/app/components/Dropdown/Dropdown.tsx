@@ -32,7 +32,9 @@ function Dropdown({ button, children }: Props) {
 
   return (
     <div className="relative">
-      <button onClick={handleClick}>{button}</button>
+      <button className="p-2 hover:bg-black/5" onClick={handleClick}>
+        {button}
+      </button>
       {isOpen && (
         <div
           className="absolute right-0 bottom-0 z-10 flex min-w-[200px] translate-y-full flex-col rounded border border-gray-200 bg-white py-1 shadow-lg"

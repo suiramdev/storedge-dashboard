@@ -1,12 +1,13 @@
 import { HiPlus } from "react-icons/hi";
 import { OrdersTable } from "@/app/components/Order";
+import { OrderRow, OrderStatus } from "@/types/tables/orders";
 
-const data = [
+const data: OrderRow[] = [
   {
     id: "1234",
     customer: "John Doe",
     total: 12.34,
-    status: "Processing",
+    status: OrderStatus.PENDING,
   },
 ];
 

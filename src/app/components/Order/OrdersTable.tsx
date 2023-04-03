@@ -1,12 +1,13 @@
 "use client";
 
-import { OrderRow } from "@/types/tables/orders";
+import { OrderRow, OrderStatus } from "@/types/tables/orders";
 import { Column } from "@/types/tables/defaults";
 import { createColumnHelper } from "@tanstack/react-table";
 import Checkbox from "@/app/components/Checkbox";
 import Dropdown from "@/app/components/Dropdown";
 import { HiArchive, HiDotsVertical, HiPencil } from "react-icons/hi";
 import Table from "@/app/components/Table";
+import StatusBadge, { Status } from "../StatusBadge";
 
 const columnHelper = createColumnHelper<OrderRow>();
 
@@ -42,7 +43,16 @@ export const columns: Column<OrderRow>[] = [
   }),
   columnHelper.accessor("status", {
     header: "Status",
-    cell: ({ getValue }) => <span>{getValue()}</span>,
+    cell: ({ getValue }) => {
+      switch (getValue()) {
+        case OrderStatus.PENDING:
+          return <StatusBadge status={Status.ERROR}>Pending</StatusBadge>;
+        case OrderStatus.PROCESSING:
+          return <StatusBadge status={Status.WARNING}>Processing</StatusBadge>;
+        default:
+          return <StatusBadge status={Status.SUCCESS}>Completed</StatusBadge>;
+      }
+    },
   }),
   columnHelper.display({
     id: "more",
