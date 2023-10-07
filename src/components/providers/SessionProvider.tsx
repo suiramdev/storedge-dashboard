@@ -1,5 +1,5 @@
 import { gql, useMutation } from "@apollo/client";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { apolloClient } from "@/lib/apollo";
 
@@ -27,6 +27,14 @@ interface SearchProviderProps {
   children: React.ReactNode;
 }
 
+const SIGNED_IN = gql`
+  query SignedIn {
+    me {
+      id
+    }
+  }
+`;
+
 const SIGN_IN = gql`
   mutation SignIn($email: String!, $password: String!) {
     generateToken(email: $email, password: $password) {
@@ -46,6 +54,12 @@ function SessionProvider({ children, ...props }: SearchProviderProps) {
   const { toast } = useToast();
   const [status, setStatus] = useState<SessionStatus>(SessionStatus.UNAUTHENTICATED);
 
+  useEffect(() => {
+    apolloClient.query({ query: SIGNED_IN }).then(() => {
+      setStatus(SessionStatus.AUTHENTICATED);
+    });
+  }, []);
+
   const [signIn] = useMutation(SIGN_IN, {
     onCompleted: (data) => {
       localStorage.setItem("accessToken", data.generateToken.accessToken);
@@ -60,19 +74,7 @@ function SessionProvider({ children, ...props }: SearchProviderProps) {
     },
   });
 
-  const [signOut] = useMutation(SIGN_OUT, {
-    onCompleted: () => {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-      apolloClient.clearStore();
-
-      toast({ title: "Signed out", description: "You have successfully signed out." });
-      setStatus(SessionStatus.UNAUTHENTICATED);
-    },
-    onError: (error) => {
-      toast({ title: "Could not sign out", description: error.message });
-    },
-  });
+  const [signOut] = useMutation(SIGN_OUT);
 
   const value = {
     status,
@@ -80,7 +82,14 @@ function SessionProvider({ children, ...props }: SearchProviderProps) {
       setStatus(SessionStatus.LOADING);
       signIn({ variables: { email, password } });
     },
-    signOut,
+    signOut: () => {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      apolloClient.clearStore();
+
+      setStatus(SessionStatus.UNAUTHENTICATED);
+      signOut();
+    },
   };
 
   return (
