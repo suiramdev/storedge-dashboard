@@ -1,3 +1,5 @@
+import { useSession } from "../providers/SessionProvider";
+import { useModals } from "@/router";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -13,14 +15,10 @@ import {
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
 import { LogOutIcon, SettingsIcon } from "lucide-react";
-import { useSession } from "@/components/providers/SessionProvider";
-import { useModals } from "@/router";
 
 function Topbar() {
-  const { setAuthenticated } = useSession();
+  const { signOut } = useSession();
   const modals = useModals();
-
-  const handleLogout = () => setAuthenticated(false);
 
   return (
     <div className="grid grid-cols-3 items-center p-6">
@@ -52,7 +50,7 @@ function Topbar() {
               Settings
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout}>
+            <DropdownMenuItem onClick={signOut}>
               <LogOutIcon className="mr-2 h-4 w-4" />
               Log out
             </DropdownMenuItem>

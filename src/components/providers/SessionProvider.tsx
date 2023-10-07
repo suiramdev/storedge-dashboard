@@ -1,13 +1,24 @@
-import { createContext, useContext, useState } from "react";
+import { gql, useMutation } from "@apollo/client";
+import { createContext, useContext, useEffect, useState } from "react";
+import { useToast } from "@/components/ui/use-toast";
+import { apolloClient } from "@/lib/apollo";
+
+export enum SessionStatus {
+  UNAUTHENTICATED,
+  LOADING,
+  AUTHENTICATED,
+}
 
 type SessionProviderState = {
-  authenticated: boolean;
-  setAuthenticated: (authenticated: boolean) => void;
+  status: SessionStatus;
+  signIn: (email: string, password: string) => void;
+  signOut: () => void;
 };
 
 const initialState: SessionProviderState = {
-  authenticated: false,
-  setAuthenticated: () => null,
+  status: SessionStatus.UNAUTHENTICATED,
+  signIn: () => {},
+  signOut: () => {},
 };
 
 const SessionProviderContext = createContext<SessionProviderState>(initialState);
@@ -16,12 +27,69 @@ interface SearchProviderProps {
   children: React.ReactNode;
 }
 
+const SIGNED_IN = gql`
+  query SignedIn {
+    me {
+      id
+    }
+  }
+`;
+
+const SIGN_IN = gql`
+  mutation SignIn($email: String!, $password: String!) {
+    generateToken(email: $email, password: $password) {
+      accessToken
+      refreshToken
+    }
+  }
+`;
+
+const SIGN_OUT = gql`
+  mutation SignOut {
+    revokeToken
+  }
+`;
+
 function SessionProvider({ children, ...props }: SearchProviderProps) {
-  const [authenticated, setAuthenticated] = useState<boolean>(false);
+  const { toast } = useToast();
+  const [status, setStatus] = useState<SessionStatus>(SessionStatus.UNAUTHENTICATED);
+
+  useEffect(() => {
+    apolloClient.query({ query: SIGNED_IN }).then(() => {
+      setStatus(SessionStatus.AUTHENTICATED);
+    });
+  }, []);
+
+  const [signIn] = useMutation(SIGN_IN, {
+    onCompleted: (data) => {
+      localStorage.setItem("accessToken", data.generateToken.accessToken);
+      localStorage.setItem("refreshToken", data.generateToken.refreshToken);
+
+      toast({ title: "Signed in", description: "You have successfully signed in." });
+      setStatus(SessionStatus.AUTHENTICATED);
+    },
+    onError: (error) => {
+      toast({ title: "Could not sign in", description: error.message });
+      setStatus(SessionStatus.UNAUTHENTICATED);
+    },
+  });
+
+  const [signOut] = useMutation(SIGN_OUT);
 
   const value = {
-    authenticated,
-    setAuthenticated,
+    status,
+    signIn: (email: string, password: string) => {
+      setStatus(SessionStatus.LOADING);
+      signIn({ variables: { email, password } });
+    },
+    signOut: () => {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      apolloClient.clearStore();
+
+      setStatus(SessionStatus.UNAUTHENTICATED);
+      signOut();
+    },
   };
 
   return (
