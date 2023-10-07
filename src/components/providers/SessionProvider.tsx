@@ -69,7 +69,7 @@ function SessionProvider({ children, ...props }: SearchProviderProps) {
       setStatus(SessionStatus.AUTHENTICATED);
     },
     onError: (error) => {
-      toast({ title: "Could not sign in", description: error.message });
+      toast({ title: "Could not sign in", description: error.message, variant: "destructive" });
       setStatus(SessionStatus.UNAUTHENTICATED);
     },
   });
