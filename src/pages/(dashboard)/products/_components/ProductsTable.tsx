@@ -1,11 +1,7 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import { useSession } from "@/components/providers/SessionProvider";
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
-import DataTable from "@/components/layout/DataTable";
-import DataTableColumnHeader from "@/components/layout/DataTable/DataTableColumnHeader";
-import { CopyIcon, MoreHorizontal, PencilIcon, TrashIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,6 +9,21 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { CopyIcon, MoreHorizontal, PencilIcon, TrashIcon } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import DataTable from "@/components/layout/DataTable";
+import DataTableColumnHeader from "@/components/layout/DataTable/DataTableColumnHeader";
+import { useState } from "react";
+import { useToast } from "@/components/ui/use-toast";
+import { apolloClient } from "@/lib/apollo";
 
 const PRODUCTS = gql`
   query Products($where: ProductWhereInput) {
@@ -27,6 +38,14 @@ type Product = {
   id: string;
   name: string;
 };
+
+const DELETE_PRODUCT = gql`
+  mutation DeleteProduct($where: ProductWhereUniqueInput!) {
+    deleteOneProduct(where: $where) {
+      id
+    }
+  }
+`;
 
 export const columns: ColumnDef<Product>[] = [
   {
@@ -54,6 +73,25 @@ export const columns: ColumnDef<Product>[] = [
     id: "actions",
     cell: ({ row }) => {
       const product = row.original;
+      const [deleteDialogOpened, openDeleteDialog] = useState(false);
+
+      const { toast } = useToast();
+
+      const [deleteProduct] = useMutation(DELETE_PRODUCT, {
+        variables: {
+          where: {
+            id: product.id,
+          },
+        },
+        onCompleted: () => {
+          apolloClient.refetchQueries({ include: ["Products"] });
+          openDeleteDialog(false);
+          toast({ title: "Product deleted" });
+        },
+        onError: (error) => {
+          toast({ title: "Couldn't delete", description: error.message, variant: "destructive" });
+        },
+      });
 
       return (
         <div className="flex justify-end">
@@ -74,12 +112,33 @@ export const columns: ColumnDef<Product>[] = [
                 <PencilIcon className="mr-2 h-4 w-4" />
                 Edit
               </DropdownMenuItem>
-              <DropdownMenuItem className="hover:!bg-destructive hover:!text-destructive-foreground">
+              <DropdownMenuItem
+                className="hover:!bg-destructive hover:!text-destructive-foreground"
+                onClick={() => openDeleteDialog(true)}
+              >
                 <TrashIcon className="mr-2 h-4 w-4" />
                 Delete
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          <Dialog open={deleteDialogOpened} onOpenChange={() => openDeleteDialog(false)}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Are you sure ?</DialogTitle>
+                <DialogDescription>
+                  This action cannot be undone. This will permanently delete the product.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button variant="ghost" onClick={() => openDeleteDialog(false)}>
+                  Cancel
+                </Button>
+                <Button variant="destructive" onClick={() => deleteProduct()}>
+                  Delete
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       );
     },
