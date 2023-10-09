@@ -24,6 +24,7 @@ import DataTableColumnHeader from "@/components/layout/DataTable/DataTableColumn
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { apolloClient } from "@/lib/apollo";
+import { useNavigate } from "@/router";
 
 const PRODUCTS = gql`
   query Products($where: ProductWhereInput) {
@@ -116,6 +117,8 @@ export const columns: ColumnDef<Product>[] = [
         },
       });
 
+      const navigate = useNavigate();
+
       return (
         <div className="flex justify-end">
           <DropdownMenu>
@@ -131,7 +134,7 @@ export const columns: ColumnDef<Product>[] = [
                 Copy product ID
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate("/products/:id", { params: { id: product.id } })}>
                 <PencilIcon className="mr-2 h-4 w-4" />
                 Edit
               </DropdownMenuItem>
