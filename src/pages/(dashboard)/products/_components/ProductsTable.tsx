@@ -1,3 +1,5 @@
+import { gql, useQuery } from "@apollo/client";
+import { useSession } from "@/components/providers/SessionProvider";
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import DataTable from "@/components/layout/DataTable";
@@ -12,24 +14,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+const PRODUCTS = gql`
+  query Products($where: ProductWhereInput) {
+    products(where: $where) {
+      id
+      name
+    }
+  }
+`;
+
 type Product = {
   id: string;
   name: string;
-  price: number;
 };
-
-const data: Product[] = [
-  {
-    id: "728ed52f",
-    name: "Fleece-lined Hooded Jacket",
-    price: 65,
-  },
-  {
-    id: "489e1d42",
-    name: "Striped Crewneck Sweatshirt",
-    price: 50,
-  },
-];
 
 export const columns: ColumnDef<Product>[] = [
   {
@@ -52,10 +49,6 @@ export const columns: ColumnDef<Product>[] = [
   {
     accessorKey: "name",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
-  },
-  {
-    accessorKey: "price",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Price" />,
   },
   {
     id: "actions",
@@ -94,10 +87,19 @@ export const columns: ColumnDef<Product>[] = [
 ];
 
 function ProductsTable() {
+  const { selectedStoreID } = useSession();
+  const { data } = useQuery(PRODUCTS, {
+    variables: {
+      where: {
+        storeId: selectedStoreID,
+      },
+    },
+  });
+
   return (
     <DataTable
       columns={columns}
-      data={data}
+      data={data || []}
       search={{ columnId: "name", placeholder: "Search by name" }}
       viewable
       paginated
