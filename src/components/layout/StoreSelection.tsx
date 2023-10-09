@@ -57,7 +57,7 @@ function Login() {
               ))}
             <Button variant="outline" className="w-full justify-start" onClick={() => modals.open("/new-store")}>
               <PlusCircleIcon className="mr-2 h-5 w-5" />
-              Create a new store
+              Create a store
             </Button>
           </CardContent>
         </Card>

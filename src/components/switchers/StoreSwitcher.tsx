@@ -90,7 +90,7 @@ function StoreSwitcher() {
                 }}
               >
                 <PlusCircleIcon className="mr-2 h-5 w-5" />
-                Create Store
+                Create a store
               </CommandItem>
             </CommandGroup>
           </CommandList>
