@@ -13,7 +13,7 @@ type SessionProviderState = {
   status: SessionStatus;
   signIn: (email: string, password: string) => void;
   signOut: () => void;
-  selectedStore: string | null;
+  selectedStoreID: string | null;
   selectStore: (id: string) => void;
 };
 
@@ -21,7 +21,7 @@ const initialState: SessionProviderState = {
   status: SessionStatus.UNAUTHENTICATED,
   signIn: () => {},
   signOut: () => {},
-  selectedStore: null,
+  selectedStoreID: null,
   selectStore: () => {},
 };
 
@@ -55,8 +55,8 @@ const SIGN_OUT = gql`
 `;
 
 const SELECT_STORE = gql`
-  query SelectStore($id: ID!) {
-    store(where: { id: $id }) {
+  query SelectStore($where: StoreWhereUniqueInput!) {
+    store(where: $where) {
       id
     }
   }
@@ -65,7 +65,7 @@ const SELECT_STORE = gql`
 function SessionProvider({ children, ...props }: SearchProviderProps) {
   const { toast } = useToast();
   const [status, setStatus] = useState<SessionStatus>(SessionStatus.UNAUTHENTICATED);
-  const [selectedStore, setSelectedStore] = useState<string | null>(localStorage.getItem("selectedStore") || null);
+  const [selectedStoreID, setSelectedStoreID] = useState<string | null>(localStorage.getItem("selectedStoreID") || null);
 
   useEffect(() => {
     apolloClient.query({ query: SIGNED_IN }).then(() => {
@@ -91,12 +91,12 @@ function SessionProvider({ children, ...props }: SearchProviderProps) {
 
   const [selectStore] = useLazyQuery(SELECT_STORE, {
     onCompleted: (data) => {
-      localStorage.setItem("selectedStore", data.store.id);
-      setSelectedStore(data.store.id);
+      localStorage.setItem("selectedStoreID", data.store.id);
+      setSelectedStoreID(data.store.id);
     },
     onError: () => {
-      localStorage.removeItem("selectedStore");
-      setSelectedStore(null);
+      localStorage.removeItem("selectedStoreID");
+      setSelectedStoreID(null);
     },
   });
 
@@ -114,8 +114,8 @@ function SessionProvider({ children, ...props }: SearchProviderProps) {
       setStatus(SessionStatus.UNAUTHENTICATED);
       signOut();
     },
-    selectedStore,
-    selectStore: (id: string) => selectStore({ variables: { id }}),
+    selectedStoreID,
+    selectStore: (id: string) => selectStore({ variables: { where: { id } }}),
   };
 
   return (

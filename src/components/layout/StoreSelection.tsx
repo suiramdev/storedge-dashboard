@@ -50,7 +50,9 @@ function Login() {
                       <Skeleton />
                     </AvatarFallback>
                   </Avatar>
-                  {store.name}
+                  <span className="truncate">
+                    {store.name}
+                  </span>
                 </Button>
               ))}
             <Button variant="outline" className="w-full justify-start" onClick={() => modals.open("/new-store")}>

@@ -6,10 +6,10 @@ import Login from "@/components/layout/Login";
 import StoreSelection from "@/components/layout/StoreSelection";
 
 function Layout() {
-  const { status, selectedStore } = useSession();
+  const { status, selectedStoreID } = useSession();
 
   if (status !== SessionStatus.AUTHENTICATED) return <Login />;
-  if (!selectedStore) return <StoreSelection />;
+  if (!selectedStoreID) return <StoreSelection />;
 
   return (
     <div className="relative flex min-h-screen flex-col">
