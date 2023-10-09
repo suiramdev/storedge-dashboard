@@ -30,6 +30,10 @@ const PRODUCTS = gql`
     products(where: $where) {
       id
       name
+      avgPrice
+      store {
+        currencyCode
+      }
     }
   }
 `;
@@ -37,6 +41,10 @@ const PRODUCTS = gql`
 type Product = {
   id: string;
   name: string;
+  avgPrice: number;
+  store: {
+    currencyCode: string;
+  };
 };
 
 const DELETE_PRODUCT = gql`
@@ -68,6 +76,21 @@ export const columns: ColumnDef<Product>[] = [
   {
     accessorKey: "name",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
+  },
+  {
+    accessorKey: "avgPrice",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Average price" />,
+    cell: ({ row, getValue }) => {
+      const value = getValue() as number | null;
+      return (
+        <span>
+          {value &&
+            new Intl.NumberFormat("fr-FR", { style: "currency", currency: row.original.store.currencyCode }).format(
+              value,
+            )}
+        </span>
+      );
+    },
   },
   {
     id: "actions",
