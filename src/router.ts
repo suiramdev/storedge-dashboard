@@ -7,7 +7,7 @@ export type Path = `/` | `/orders` | `/products`;
 
 export type Params = {};
 
-export type ModalPath = `/search`;
+export type ModalPath = `/new-store` | `/search`;
 
 export const { Link, Navigate } = components<Path, Params>();
 export const { useModals, useNavigate, useParams } = hooks<Path, Params, ModalPath>();

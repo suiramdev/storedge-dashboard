@@ -3,7 +3,7 @@ import { useModals } from "@/router";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import ShopSwitcher from "@/components/switchers/ShopSwitcher";
+import StoreSwitcher from "@/components/switchers/StoreSwitcher";
 import ThemeSwitcher from "@/components/switchers/ThemeSwitcher";
 import {
   DropdownMenu,
@@ -22,7 +22,7 @@ function Topbar() {
 
   return (
     <div className="grid grid-cols-3 items-center p-6">
-      <ShopSwitcher />
+      <StoreSwitcher />
       <Input
         type="search"
         placeholder="Search..."

@@ -1,7 +1,7 @@
-import { CommandDialog, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { useModals } from "@/router";
-import { ArrowUpLeftIcon } from "lucide-react";
 import { useMemo } from "react";
+import { CommandDialog, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { ArrowUpLeftIcon } from "lucide-react";
 
 function SearchModal() {
   const modals = useModals();
