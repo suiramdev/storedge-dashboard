@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/components/ui/use-toast";
 import { useSession } from "@/components/providers/SessionProvider";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -64,66 +64,70 @@ function NewStoreModal() {
   });
 
   return (
-    <Dialog open={open} onOpenChange={() => modals.close()}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Create a new store</DialogTitle>
-        </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={handleSubmit} className="space-y-2">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem className="space-y-2">
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem className="space-y-1">
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Textarea {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="currency"
-              render={({ field }) => (
-                <FormItem className="space-y-1">
-                  <FormLabel>Currency</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+    <Form {...form}>
+      <form onSubmit={handleSubmit}>
+        <Dialog open={open} onOpenChange={() => modals.close()}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Create a new store</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-2">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel>Name</FormLabel>
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a currency" />
-                      </SelectTrigger>
+                      <Input {...field} />
                     </FormControl>
-                    <SelectContent>
-                      <SelectItem value="EUR">Euro €</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button type="submit" className="w-full">
-              Create
-            </Button>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem className="space-y-1">
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="currency"
+                render={({ field }) => (
+                  <FormItem className="space-y-1">
+                    <FormLabel>Currency</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a currency" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="EUR">Euro €</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <DialogFooter>
+              <Button type="submit" className="w-full">
+                Create
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </form>
+    </Form>
   );
 }
 
