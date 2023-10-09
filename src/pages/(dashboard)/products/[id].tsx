@@ -1,6 +1,6 @@
 import { useParams } from "@/router";
 
-function ProductsPage() {
+function ProductPage() {
   const { id } = useParams("/products/:id");
 
   return (
@@ -11,4 +11,4 @@ function ProductsPage() {
   );
 }
 
-export default ProductsPage;
+export default ProductPage;
