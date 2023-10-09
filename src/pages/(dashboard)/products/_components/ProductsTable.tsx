@@ -1,9 +1,7 @@
+import { gql, useMutation, useQuery } from "@apollo/client";
+import { useSession } from "@/components/providers/SessionProvider";
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
-import DataTable from "@/components/layout/DataTable";
-import DataTableColumnHeader from "@/components/layout/DataTable/DataTableColumnHeader";
-import { CopyIcon, MoreHorizontal, PencilIcon, TrashIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,25 +9,52 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { CopyIcon, MoreHorizontal, PencilIcon, TrashIcon } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import DataTable from "@/components/layout/DataTable";
+import DataTableColumnHeader from "@/components/layout/DataTable/DataTableColumnHeader";
+import { useState } from "react";
+import { useToast } from "@/components/ui/use-toast";
+import { apolloClient } from "@/lib/apollo";
+import { useNavigate } from "@/router";
+
+const PRODUCTS = gql`
+  query Products($where: ProductWhereInput) {
+    products(where: $where) {
+      id
+      name
+      avgPrice
+      store {
+        currencyCode
+      }
+    }
+  }
+`;
 
 type Product = {
   id: string;
   name: string;
-  price: number;
+  avgPrice: number;
+  store: {
+    currencyCode: string;
+  };
 };
 
-const data: Product[] = [
-  {
-    id: "728ed52f",
-    name: "Fleece-lined Hooded Jacket",
-    price: 65,
-  },
-  {
-    id: "489e1d42",
-    name: "Striped Crewneck Sweatshirt",
-    price: 50,
-  },
-];
+const DELETE_PRODUCT = gql`
+  mutation DeleteProduct($where: ProductWhereUniqueInput!) {
+    deleteOneProduct(where: $where) {
+      id
+    }
+  }
+`;
 
 export const columns: ColumnDef<Product>[] = [
   {
@@ -54,13 +79,45 @@ export const columns: ColumnDef<Product>[] = [
     header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
   },
   {
-    accessorKey: "price",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Price" />,
+    accessorKey: "avgPrice",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Average price" />,
+    cell: ({ row, getValue }) => {
+      const value = getValue() as number | null;
+      return (
+        <span>
+          {value &&
+            new Intl.NumberFormat("fr-FR", { style: "currency", currency: row.original.store.currencyCode }).format(
+              value,
+            )}
+        </span>
+      );
+    },
   },
   {
     id: "actions",
     cell: ({ row }) => {
       const product = row.original;
+      const [deleteDialogOpened, openDeleteDialog] = useState(false);
+
+      const { toast } = useToast();
+
+      const [deleteProduct] = useMutation(DELETE_PRODUCT, {
+        variables: {
+          where: {
+            id: product.id,
+          },
+        },
+        onCompleted: () => {
+          apolloClient.refetchQueries({ include: ["Products"] });
+          openDeleteDialog(false);
+          toast({ title: "Product deleted" });
+        },
+        onError: (error) => {
+          toast({ title: "Couldn't delete", description: error.message, variant: "destructive" });
+        },
+      });
+
+      const navigate = useNavigate();
 
       return (
         <div className="flex justify-end">
@@ -77,16 +134,37 @@ export const columns: ColumnDef<Product>[] = [
                 Copy product ID
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate("/products/:id", { params: { id: product.id } })}>
                 <PencilIcon className="mr-2 h-4 w-4" />
                 Edit
               </DropdownMenuItem>
-              <DropdownMenuItem className="hover:!bg-destructive hover:!text-destructive-foreground">
+              <DropdownMenuItem
+                className="hover:!bg-destructive hover:!text-destructive-foreground"
+                onClick={() => openDeleteDialog(true)}
+              >
                 <TrashIcon className="mr-2 h-4 w-4" />
                 Delete
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          <Dialog open={deleteDialogOpened} onOpenChange={() => openDeleteDialog(false)}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Are you sure ?</DialogTitle>
+                <DialogDescription>
+                  This action cannot be undone. This will permanently delete the product.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button variant="ghost" onClick={() => openDeleteDialog(false)}>
+                  Cancel
+                </Button>
+                <Button variant="destructive" onClick={() => deleteProduct()}>
+                  Delete
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       );
     },
@@ -94,10 +172,21 @@ export const columns: ColumnDef<Product>[] = [
 ];
 
 function ProductsTable() {
+  const { selectedStoreID } = useSession();
+  const { data } = useQuery(PRODUCTS, {
+    variables: {
+      where: {
+        storeId: {
+          equals: selectedStoreID,
+        },
+      },
+    },
+  });
+
   return (
     <DataTable
       columns={columns}
-      data={data}
+      data={data ? data.products : []}
       search={{ columnId: "name", placeholder: "Search by name" }}
       viewable
       paginated
