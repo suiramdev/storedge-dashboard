@@ -1,4 +1,4 @@
-import { gql, useMutation } from "@apollo/client";
+import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { apolloClient } from "@/lib/apollo";
@@ -13,12 +13,16 @@ type SessionProviderState = {
   status: SessionStatus;
   signIn: (email: string, password: string) => void;
   signOut: () => void;
+  selectedStore: string | null;
+  selectStore: (id: string) => void;
 };
 
 const initialState: SessionProviderState = {
   status: SessionStatus.UNAUTHENTICATED,
   signIn: () => {},
   signOut: () => {},
+  selectedStore: null,
+  selectStore: () => {},
 };
 
 const SessionProviderContext = createContext<SessionProviderState>(initialState);
@@ -50,9 +54,18 @@ const SIGN_OUT = gql`
   }
 `;
 
+const SELECT_STORE = gql`
+  query SelectStore($id: ID!) {
+    store(where: { id: $id }) {
+      id
+    }
+  }
+`;
+
 function SessionProvider({ children, ...props }: SearchProviderProps) {
   const { toast } = useToast();
   const [status, setStatus] = useState<SessionStatus>(SessionStatus.UNAUTHENTICATED);
+  const [selectedStore, setSelectedStore] = useState<string | null>(localStorage.getItem("selectedStore") || null);
 
   useEffect(() => {
     apolloClient.query({ query: SIGNED_IN }).then(() => {
@@ -76,6 +89,17 @@ function SessionProvider({ children, ...props }: SearchProviderProps) {
 
   const [signOut] = useMutation(SIGN_OUT);
 
+  const [selectStore] = useLazyQuery(SELECT_STORE, {
+    onCompleted: (data) => {
+      localStorage.setItem("selectedStore", data.store.id);
+      setSelectedStore(data.store.id);
+    },
+    onError: () => {
+      localStorage.removeItem("selectedStore");
+      setSelectedStore(null);
+    },
+  });
+
   const value = {
     status,
     signIn: (email: string, password: string) => {
@@ -90,6 +114,8 @@ function SessionProvider({ children, ...props }: SearchProviderProps) {
       setStatus(SessionStatus.UNAUTHENTICATED);
       signOut();
     },
+    selectedStore,
+    selectStore: (id: string) => selectStore({ variables: { id }}),
   };
 
   return (
