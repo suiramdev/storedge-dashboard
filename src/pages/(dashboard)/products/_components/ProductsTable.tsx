@@ -91,7 +91,9 @@ function ProductsTable() {
   const { data } = useQuery(PRODUCTS, {
     variables: {
       where: {
-        storeId: selectedStoreID,
+        storeId: {
+          equals: selectedStoreID,
+        },
       },
     },
   });
@@ -99,7 +101,7 @@ function ProductsTable() {
   return (
     <DataTable
       columns={columns}
-      data={data || []}
+      data={data ? data.products : []}
       search={{ columnId: "name", placeholder: "Search by name" }}
       viewable
       paginated
