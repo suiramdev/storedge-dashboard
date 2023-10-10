@@ -12,43 +12,39 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const formSchema = z.object({
   name: z.string().trim().min(3, "Name must be at least 3 character"),
   description: z.string().optional(),
-  currency: z.string().min(1, "Please select a currency"),
 });
 
-const CREATE_STORE = gql`
-  mutation CreateStore($data: StoreCreateInput!) {
-    createOneStore(data: $data) {
+const CREATE_PRODUCT = gql`
+  mutation CreateProduct($data: ProductCreateInput!) {
+    createOneProduct(data: $data) {
       id
       name
     }
   }
 `;
 
-function NewStoreModal() {
+function NewProductModal() {
   const modals = useModals();
-  const open = useMemo(() => modals.current === "/new-store", [modals.current]);
+  const open = useMemo(() => modals.current === "/new-product", [modals.current]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
       description: "",
-      currency: "",
     },
   });
 
   const { toast } = useToast();
 
-  const [createStore] = useMutation(CREATE_STORE, {
+  const [createProduct] = useMutation(CREATE_PRODUCT, {
     onCompleted: (data) => {
-      selectStore(data.createOneStore.id);
-      toast({ title: "Store created", description: `${data.createOneStore.name} store has been created` });
-      apolloClient.refetchQueries({ include: ["Stores"] });
+      toast({ title: "Product created", description: `${data.createOneProduct.name} has been created` });
+      apolloClient.refetchQueries({ include: ["Products"] });
       modals.close();
     },
     onError: (error) => {
@@ -56,15 +52,20 @@ function NewStoreModal() {
     },
   });
 
-  const selectStore = useSession((state) => state.selectStore);
+  const selectedStoreId = useSession((state) => state.selectedStoreId);
 
   const handleSubmit = form.handleSubmit((data) => {
-    createStore({
+    createProduct({
       variables: {
         data: {
           name: data.name,
           description: data.description,
-          currencyCode: data.currency,
+          status: "Draft",
+          store: {
+            connect: {
+              id: selectedStoreId,
+            },
+          },
         },
       },
     });
@@ -74,9 +75,8 @@ function NewStoreModal() {
     <Dialog open={open} onOpenChange={() => modals.close()}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create a new store</DialogTitle>
+          <DialogTitle>Create a new product</DialogTitle>
         </DialogHeader>
-
         <Form {...form}>
           <form onSubmit={handleSubmit} className="space-y-2">
             <FormField
@@ -105,26 +105,6 @@ function NewStoreModal() {
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="currency"
-              render={({ field }) => (
-                <FormItem className="space-y-1">
-                  <FormLabel>Currency</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a currency" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="EUR">Euro €</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
           </form>
         </Form>
         <DialogFooter>
@@ -137,4 +117,4 @@ function NewStoreModal() {
   );
 }
 
-export default NewStoreModal;
+export default NewProductModal;

@@ -9,7 +9,7 @@ export type Params = {
   "/products/:id": { id: string };
 };
 
-export type ModalPath = `/new-store` | `/search`;
+export type ModalPath = `/new-product` | `/new-store` | `/search`;
 
 export const { Link, Navigate } = components<Path, Params>();
 export const { useModals, useNavigate, useParams } = hooks<Path, Params, ModalPath>();

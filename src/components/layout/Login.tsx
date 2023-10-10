@@ -16,6 +16,10 @@ const formSchema = z.object({
 function Login() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
   });
 
   const { status, signIn } = useSession(useShallow((state) => ({ status: state.status, signIn: state.signIn })));

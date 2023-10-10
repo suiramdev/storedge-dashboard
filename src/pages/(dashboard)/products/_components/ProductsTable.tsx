@@ -152,11 +152,11 @@ export const columns: ColumnDef<Product>[] = [
               <DialogHeader>
                 <DialogTitle>Are you sure ?</DialogTitle>
                 <DialogDescription>
-                  This action cannot be undone. This will permanently delete the product.
+                  This action is irreversible. All the data related to this product will be deleted.
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>
-                <Button variant="ghost" onClick={() => openDeleteDialog(false)}>
+                <Button variant="outline" onClick={() => openDeleteDialog(false)}>
                   Cancel
                 </Button>
                 <Button variant="destructive" onClick={() => deleteProduct()}>
