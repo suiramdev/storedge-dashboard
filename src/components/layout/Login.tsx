@@ -1,11 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
+import { SessionStatus, useSession } from "@//providers/session";
+import { useShallow } from "zustand/react/shallow";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { SessionStatus, useSession } from "@/components/providers/SessionProvider";
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -17,7 +18,7 @@ function Login() {
     resolver: zodResolver(formSchema),
   });
 
-  const { status, signIn } = useSession();
+  const { status, signIn } = useSession(useShallow((state) => ({ status: state.status, signIn: state.signIn })));
 
   return (
     <div className="grid min-h-screen grid-cols-2">

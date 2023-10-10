@@ -1,13 +1,14 @@
 import { ApolloLink, gql, fromPromise, HttpLink, from, ApolloClient, InMemoryCache } from "@apollo/client";
+import { useSession, SessionStatus } from "@/providers/session";
 import { onError } from "@apollo/client/link/error";
 import { loadErrorMessages, loadDevMessages } from "@apollo/client/dev";
 
 const authLink = new ApolloLink((operation, forward) => {
-  const token = localStorage.getItem("accessToken");
+  const accessToken = useSession.getState().tokens?.access;
 
   operation.setContext({
     headers: {
-      authorization: token ? `Bearer ${token}` : "",
+      authorization: accessToken && `Bearer ${accessToken}`,
     },
   });
 
@@ -15,8 +16,8 @@ const authLink = new ApolloLink((operation, forward) => {
 });
 
 const REFRESH_TOKEN = gql`
-  mutation RefreshToken($token: String!) {
-    refreshToken(refreshToken: $token) {
+  mutation RefreshToken($refreshToken: String!) {
+    refreshToken(refreshToken: $refreshtoken) {
       accessToken
       refreshToken
     }
@@ -24,12 +25,25 @@ const REFRESH_TOKEN = gql`
 `;
 
 const refreshToken = async () => {
-  const token = localStorage.getItem("refreshToken");
+  const refreshToken = useSession.getState().tokens?.refresh;
 
-  const { data } = await apolloClient.mutate({ mutation: REFRESH_TOKEN, variables: { token } });
+  const { data } = await apolloClient.mutate({ mutation: REFRESH_TOKEN, variables: { refreshToken } });
 
-  localStorage.setItem("accessToken", data.refreshToken.accessToken);
-  localStorage.setItem("refreshToken", data.refreshToken.refreshToken);
+  if (!data?.refreshToken) {
+    useSession.setState({
+      tokens: undefined,
+      status: SessionStatus.UNAUTHENTICATED,
+    });
+
+    return;
+  }
+
+  useSession.setState({
+    tokens: {
+      access: data.refreshToken.accessToken,
+      refresh: data.refreshToken.refreshToken,
+    },
+  });
 };
 
 const errorLink = onError(({ graphQLErrors, forward, operation }) => {
@@ -37,13 +51,13 @@ const errorLink = onError(({ graphQLErrors, forward, operation }) => {
     for (let err of graphQLErrors) {
       if (err.extensions.code == "UNAUTHENTICATED") {
         return fromPromise(refreshToken()).flatMap(() => {
-          const token = localStorage.getItem("accessToken");
+          const accessToken = useSession.getState().tokens?.access;
 
           const oldHeaders = operation.getContext().headers;
           operation.setContext({
             headers: {
               ...oldHeaders,
-              authorization: token ? `Bearer ${token}` : "",
+              authorization: accessToken ? `Bearer ${accessToken}` : "",
             },
           });
 
