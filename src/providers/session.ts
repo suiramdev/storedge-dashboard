@@ -84,14 +84,14 @@ export const useSession = create<SessionState>()(
             });
         },
         signOut: () => {
-          apolloClient.clearStore();
+          apolloClient.mutate({ mutation: SIGN_OUT });
 
           set({
             tokens: undefined,
             status: SessionStatus.UNAUTHENTICATED,
           });
 
-          apolloClient.mutate({ mutation: SIGN_OUT });
+          apolloClient.clearStore();
         },
         selectedStoreId: null,
         selectStore: (id) => {
