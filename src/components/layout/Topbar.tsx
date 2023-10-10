@@ -1,4 +1,4 @@
-import { useSession } from "../providers/SessionProvider";
+import { useSession } from "@/providers/session";
 import { useModals } from "@/router";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -17,7 +17,7 @@ import { Button } from "../ui/button";
 import { LogOutIcon, SettingsIcon } from "lucide-react";
 
 function Topbar() {
-  const { signOut } = useSession();
+  const signOut = useSession((state) => state.signOut);
   const modals = useModals();
 
   return (

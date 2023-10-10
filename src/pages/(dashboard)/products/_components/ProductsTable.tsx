@@ -1,5 +1,5 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { useSession } from "@/components/providers/SessionProvider";
+import { useSession } from "@/providers/session";
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -172,12 +172,12 @@ export const columns: ColumnDef<Product>[] = [
 ];
 
 function ProductsTable() {
-  const { selectedStoreID } = useSession();
+  const selectedStoreId = useSession((state) => state.selectedStoreId);
   const { data } = useQuery(PRODUCTS, {
     variables: {
       where: {
         storeId: {
-          equals: selectedStoreID,
+          equals: selectedStoreId,
         },
       },
     },

@@ -1,6 +1,7 @@
 import { gql, useQuery } from "@apollo/client";
 import { useMemo, useState } from "react";
-import { useSession } from "../providers/SessionProvider";
+import { useSession } from "@/providers/session";
+import { useShallow } from "zustand/react/shallow";
 import { useModals } from "@/router";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
@@ -30,13 +31,15 @@ const STORES = gql`
 
 function StoreSwitcher() {
   const [open, setOpen] = useState<boolean>(false);
-  const { selectedStoreID, selectStore } = useSession();
+  const { selectedStoreID: selectedStoreId, selectStore } = useSession(
+    useShallow((state) => ({ selectedStoreID: state.selectedStoreId, selectStore: state.selectStore })),
+  );
   const { data } = useQuery(STORES);
   const modals = useModals();
 
   const selectedStore = useMemo(
-    () => data?.stores.find((store: any) => store.id === selectedStoreID),
-    [data, selectedStoreID],
+    () => data?.stores.find((store: any) => store.id === selectedStoreId),
+    [data, selectedStoreId],
   );
 
   return (
@@ -72,11 +75,9 @@ function StoreSwitcher() {
                         <Skeleton />
                       </AvatarFallback>
                     </Avatar>
-                    <span className="truncate">
-                      {store.name}
-                    </span>
+                    <span className="truncate">{store.name}</span>
                     <CheckIcon
-                      className={cn("ml-auto h-4 w-4", selectedStoreID === store.id ? "opacity-100" : "opacity-0")}
+                      className={cn("ml-auto h-4 w-4", selectedStoreId === store.id ? "opacity-100" : "opacity-0")}
                     />
                   </CommandItem>
                 ))}

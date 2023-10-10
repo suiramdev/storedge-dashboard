@@ -1,5 +1,5 @@
 import { gql, useQuery } from "@apollo/client";
-import { useSession } from "@/components/providers/SessionProvider";
+import { useSession } from "@/providers/session";
 import { useModals } from "@/router";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,7 @@ const STORES = gql`
 `;
 
 function Login() {
-  const { selectStore } = useSession();
+  const selectStore = useSession((state) => state.selectStore);
   const { data } = useQuery(STORES);
   const modals = useModals();
 
