@@ -16,8 +16,8 @@ import DataTableSearchFilter from "./DataTableSearchFilter";
 import { DataTableViewOptions } from "./DataTableViewOptions";
 import DataTablePagination from "./DataTablePagination";
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
+interface DataTableProps<TData> {
+  columns: ColumnDef<TData, any>[];
   data: TData[];
   search?: {
     columnId: string;
@@ -26,7 +26,7 @@ interface DataTableProps<TData, TValue> {
   paginated?: boolean;
 }
 
-function DataTable<TData, TValue>({ columns, data, search, viewable, paginated }: DataTableProps<TData, TValue>) {
+function DataTable<TData>({ columns, data, search, viewable, paginated }: DataTableProps<TData>) {
   const [rowSelection, setRowSelection] = useState({});
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);

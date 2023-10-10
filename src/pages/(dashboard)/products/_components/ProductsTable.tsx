@@ -1,6 +1,6 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { useSession } from "@/providers/session";
-import { ColumnDef } from "@tanstack/react-table";
+import { createColumnHelper } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
@@ -25,39 +25,42 @@ import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { apolloClient } from "@/lib/apollo";
 import { useNavigate } from "@/router";
+import { Badge } from "@/components/ui/badge";
+import { Product, ProductStatus } from "@/types";
 
 const PRODUCTS = gql`
   query Products($where: ProductWhereInput) {
     products(where: $where) {
       id
+      images(take: 1) {
+        src
+        alt
+      }
       name
       avgPrice
       store {
         currencyCode
       }
+      status
     }
   }
 `;
 
-type Product = {
-  id: string;
-  name: string;
-  avgPrice: number;
-  store: {
-    currencyCode: string;
-  };
-};
-
 const DELETE_PRODUCT = gql`
-  mutation DeleteProduct($where: ProductWhereUniqueInput!) {
-    deleteOneProduct(where: $where) {
+  mutation DeleteProduct($id: String!) {
+    deleteManyProductImage(where: { product: { is: { id: { equals: $id } } } }) {
+      count
+    }
+    deleteOneProduct(where: { id: $id }) {
       id
     }
   }
 `;
 
-export const columns: ColumnDef<Product>[] = [
-  {
+const columnHelper = createColumnHelper<Product>();
+
+export const columns = [
+  columnHelper.display({
     id: "select",
     header: ({ table }) => (
       <Checkbox
@@ -73,27 +76,35 @@ export const columns: ColumnDef<Product>[] = [
         aria-label="Select row"
       />
     ),
-  },
-  {
-    accessorKey: "name",
+  }),
+  columnHelper.accessor((row) => row.images[0], {
+    id: "image",
+    header: undefined,
+    cell: ({ getValue }) =>
+      getValue() && <img src={getValue()!.src} alt={getValue()!.alt} className="h-8 w-8 rounded-full" />,
+  }),
+  columnHelper.accessor("name", {
     header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
-  },
-  {
-    accessorKey: "avgPrice",
+  }),
+  columnHelper.accessor("avgPrice", {
     header: ({ column }) => <DataTableColumnHeader column={column} title="Average price" />,
-    cell: ({ row, getValue }) => {
-      const value = getValue() as number | null;
-      return (
-        <span>
-          {value &&
-            new Intl.NumberFormat("fr-FR", { style: "currency", currency: row.original.store.currencyCode }).format(
-              value,
-            )}
-        </span>
-      );
-    },
-  },
-  {
+    cell: ({ row, getValue }) => (
+      <span>
+        {getValue()
+          ? new Intl.NumberFormat("fr-FR", { style: "currency", currency: row.original.store.currencyCode }).format(
+              getValue()!,
+            )
+          : "-"}
+      </span>
+    ),
+  }),
+  columnHelper.accessor("status", {
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+    cell: ({ getValue }) => (
+      <Badge variant={getValue() === ProductStatus.PUBLISHED ? "default" : "outline"}>{getValue()}</Badge>
+    ),
+  }),
+  columnHelper.display({
     id: "actions",
     cell: ({ row }) => {
       const product = row.original;
@@ -103,9 +114,7 @@ export const columns: ColumnDef<Product>[] = [
 
       const [deleteProduct] = useMutation(DELETE_PRODUCT, {
         variables: {
-          where: {
-            id: product.id,
-          },
+          id: product.id,
         },
         onCompleted: () => {
           apolloClient.refetchQueries({ include: ["Products"] });
@@ -168,7 +177,7 @@ export const columns: ColumnDef<Product>[] = [
         </div>
       );
     },
-  },
+  }),
 ];
 
 function ProductsTable() {
