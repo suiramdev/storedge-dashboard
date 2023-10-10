@@ -17,7 +17,7 @@ const authLink = new ApolloLink((operation, forward) => {
 
 const REFRESH_TOKEN = gql`
   mutation RefreshToken($refreshToken: String!) {
-    refreshToken(refreshToken: $refreshtoken) {
+    refreshToken(refreshToken: $refreshToken) {
       accessToken
       refreshToken
     }
@@ -27,9 +27,9 @@ const REFRESH_TOKEN = gql`
 const refreshToken = async () => {
   const refreshToken = useSession.getState().tokens?.refresh;
 
-  const { data } = await apolloClient.mutate({ mutation: REFRESH_TOKEN, variables: { refreshToken } });
+  const { errors, data } = await apolloClient.mutate({ mutation: REFRESH_TOKEN, variables: { refreshToken } });
 
-  if (!data?.refreshToken) {
+  if (errors) {
     useSession.setState({
       tokens: undefined,
       status: SessionStatus.UNAUTHENTICATED,
@@ -49,7 +49,7 @@ const refreshToken = async () => {
 const errorLink = onError(({ graphQLErrors, forward, operation }) => {
   if (graphQLErrors) {
     for (let err of graphQLErrors) {
-      if (err.extensions.code == "UNAUTHENTICATED") {
+      if (err.extensions.code == "EXPIRED_TOKEN") {
         return fromPromise(refreshToken()).flatMap(() => {
           const accessToken = useSession.getState().tokens?.access;
 
