@@ -46,7 +46,7 @@ function ProductPage() {
                 Back to products
               </Link>
             </Button>
-            <Button>Save changes</Button>
+            <Button disabled={!form.formState.isDirty} type="submit">Save changes</Button>
           </div>
           <div className="col-span-3 space-y-4 rounded-lg border bg-background px-4 py-6">
             <FormField
