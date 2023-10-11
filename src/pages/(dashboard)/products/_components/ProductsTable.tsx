@@ -1,4 +1,4 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { gql, useQuery } from "@apollo/client";
 import { useSession } from "@/providers/session";
 import { createColumnHelper } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -9,24 +9,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useState } from "react";
+import { Link } from "@/router";
 import { Button } from "@/components/ui/button";
 import { CopyIcon, MoreHorizontal, PencilIcon, TrashIcon } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
 import DataTable from "@/components/layout/DataTable";
 import DataTableColumnHeader from "@/components/layout/DataTable/DataTableColumnHeader";
-import { useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
-import { apolloClient } from "@/lib/apollo";
-import { useNavigate } from "@/router";
 import { Badge } from "@/components/ui/badge";
 import { Product, ProductStatus } from "@/types";
+import DeleteProductDialog from "@/components/dialogs/DeleteProductDialog";
 
 const PRODUCTS = gql`
   query Products($where: ProductWhereInput) {
@@ -42,17 +33,6 @@ const PRODUCTS = gql`
         currencyCode
       }
       status
-    }
-  }
-`;
-
-const DELETE_PRODUCT = gql`
-  mutation DeleteProduct($id: String!) {
-    deleteManyProductImage(where: { product: { is: { id: { equals: $id } } } }) {
-      count
-    }
-    deleteOneProduct(where: { id: $id }) {
-      id
     }
   }
 `;
@@ -108,25 +88,8 @@ export const columns = [
     id: "actions",
     cell: ({ row }) => {
       const product = row.original;
+
       const [deleteDialogOpened, openDeleteDialog] = useState(false);
-
-      const { toast } = useToast();
-
-      const [deleteProduct] = useMutation(DELETE_PRODUCT, {
-        variables: {
-          id: product.id,
-        },
-        onCompleted: () => {
-          apolloClient.refetchQueries({ include: ["Products"] });
-          openDeleteDialog(false);
-          toast({ title: "Product deleted" });
-        },
-        onError: (error) => {
-          toast({ title: "Couldn't delete", description: error.message, variant: "destructive" });
-        },
-      });
-
-      const navigate = useNavigate();
 
       return (
         <div className="flex justify-end">
@@ -143,9 +106,11 @@ export const columns = [
                 Copy product ID
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => navigate("/products/:id", { params: { id: product.id } })}>
-                <PencilIcon className="mr-2 h-4 w-4" />
-                Edit
+              <DropdownMenuItem asChild>
+                <Link to="/products/:id" params={{ id: product.id }}>
+                  <PencilIcon className="mr-2 h-4 w-4" />
+                  Edit
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem
                 className="hover:!bg-destructive hover:!text-destructive-foreground"
@@ -156,24 +121,7 @@ export const columns = [
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <Dialog open={deleteDialogOpened} onOpenChange={() => openDeleteDialog(false)}>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Are you sure ?</DialogTitle>
-                <DialogDescription>
-                  This action is irreversible. All the data related to this product will be deleted.
-                </DialogDescription>
-              </DialogHeader>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => openDeleteDialog(false)}>
-                  Cancel
-                </Button>
-                <Button variant="destructive" onClick={() => deleteProduct()}>
-                  Delete
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+          <DeleteProductDialog id={product.id} open={deleteDialogOpened} onOpenChange={openDeleteDialog} />
         </div>
       );
     },
