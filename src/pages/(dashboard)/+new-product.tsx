@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/components/ui/use-toast";
-import { apolloClient } from "@/lib/apollo";
+import { PRODUCTS } from "./products/_components/ProductsTable";
 import { useSession } from "@/providers/session";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -18,7 +18,7 @@ const formSchema = z.object({
   description: z.string().optional(),
 });
 
-const CREATE_PRODUCT = gql`
+export const CREATE_PRODUCT = gql`
   mutation CreateProduct($data: ProductCreateInput!) {
     createOneProduct(data: $data) {
       id
@@ -42,9 +42,9 @@ function NewProductModal() {
   const { toast } = useToast();
 
   const [createProduct] = useMutation(CREATE_PRODUCT, {
+    refetchQueries: [PRODUCTS],
     onCompleted: (data) => {
       toast({ title: "Product created", description: `${data.createOneProduct.name} has been created` });
-      apolloClient.refetchQueries({ include: ["Products"] });
       modals.close();
     },
     onError: (error) => {
