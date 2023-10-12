@@ -20,7 +20,7 @@ import {
 import { cn } from "@/lib/utils";
 import { PlusCircleIcon } from "lucide-react";
 
-const STORES = gql`
+export const STORES = gql`
   query Stores {
     stores {
       id

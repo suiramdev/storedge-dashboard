@@ -5,7 +5,8 @@ import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/components/ui/use-toast";
-import { apolloClient } from "@/lib/apollo";
+import { STORES as STORES_SELECTION } from "@/components/layout/StoreSelection";
+import { STORES as STORES_SWITCHER } from "@/components/switchers/StoreSwitcher";
 import { useSession } from "@/providers/session";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -45,10 +46,10 @@ function NewStoreModal() {
   const { toast } = useToast();
 
   const [createStore] = useMutation(CREATE_STORE, {
+    refetchQueries: [STORES_SELECTION, STORES_SWITCHER],
     onCompleted: (data) => {
       selectStore(data.createOneStore.id);
       toast({ title: "Store created", description: `${data.createOneStore.name} store has been created` });
-      apolloClient.refetchQueries({ include: ["Stores"] });
       modals.close();
     },
     onError: (error) => {

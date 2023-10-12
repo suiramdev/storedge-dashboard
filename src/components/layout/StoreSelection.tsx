@@ -7,7 +7,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PlusCircleIcon } from "lucide-react";
 
-const STORES = gql`
+export const STORES = gql`
   query Stores {
     stores {
       id
