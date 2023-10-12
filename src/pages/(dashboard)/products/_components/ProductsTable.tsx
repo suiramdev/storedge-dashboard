@@ -9,17 +9,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useState } from "react";
-import { Link } from "@/router";
+import { Link, useModals } from "@/router";
 import { Button } from "@/components/ui/button";
 import { CopyIcon, MoreHorizontal, PencilIcon, TrashIcon } from "lucide-react";
 import DataTable from "@/components/layout/DataTable";
 import DataTableColumnHeader from "@/components/layout/DataTable/DataTableColumnHeader";
 import { Badge } from "@/components/ui/badge";
 import { Product, ProductStatus } from "@/types";
-import DeleteProductDialog from "@/components/dialogs/DeleteProductDialog";
 
-const PRODUCTS = gql`
+export const PRODUCTS = gql`
   query Products($where: ProductWhereInput) {
     products(where: $where) {
       id
@@ -89,7 +87,7 @@ export const columns = [
     cell: ({ row }) => {
       const product = row.original;
 
-      const [deleteDialogOpened, openDeleteDialog] = useState(false);
+      const modals = useModals();
 
       return (
         <div className="flex justify-end">
@@ -106,22 +104,21 @@ export const columns = [
                 Copy product ID
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link to="/products/:id" params={{ id: product.id }}>
+              <Link to="/products/:id" params={{ id: product.id }}>
+                <DropdownMenuItem>
                   <PencilIcon className="mr-2 h-4 w-4" />
                   Edit
-                </Link>
-              </DropdownMenuItem>
+                </DropdownMenuItem>
+              </Link>
               <DropdownMenuItem
                 className="hover:!bg-destructive hover:!text-destructive-foreground"
-                onClick={() => openDeleteDialog(true)}
+                onClick={() => modals.open("/products/[id]/delete", { state: { product: { id: product.id } } })}
               >
                 <TrashIcon className="mr-2 h-4 w-4" />
                 Delete
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <DeleteProductDialog id={product.id} open={deleteDialogOpened} onOpenChange={openDeleteDialog} />
         </div>
       );
     },

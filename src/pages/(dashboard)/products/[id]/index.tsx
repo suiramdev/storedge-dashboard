@@ -1,10 +1,7 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import {
-  // useParams,
-  Link,
-  useModals,
-} from "@/router";
+import { gql, useQuery } from "@apollo/client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useParams, Link, useModals } from "@/router";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -20,9 +17,22 @@ const formSchema = z.object({
   status: z.enum([ProductStatus.PUBLISHED, ProductStatus.DRAFT]),
 });
 
+export const PRODUCT = gql`
+  query Product($id: String!) {
+    product(where: { id: $id }) {
+      id
+      name
+      description
+      status
+    }
+  }
+`;
+
 function ProductPage() {
-  // const { id } = useParams("/products/:id");
+  const { id } = useParams("/products/:id");
   const modals = useModals();
+
+  const { data } = useQuery(PRODUCT, { variables: { id } });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -46,7 +56,9 @@ function ProductPage() {
                 Back to products
               </Link>
             </Button>
-            <Button disabled={!form.formState.isDirty} type="submit">Save changes</Button>
+            <Button disabled={!form.formState.isDirty} type="submit">
+              Save changes
+            </Button>
           </div>
           <div className="col-span-3 space-y-4 rounded-lg border bg-background px-4 py-6">
             <FormField
