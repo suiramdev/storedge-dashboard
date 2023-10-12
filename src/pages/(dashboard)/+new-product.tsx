@@ -1,7 +1,6 @@
 import * as z from "zod";
 import { gql, useMutation } from "@apollo/client";
 import { useModals } from "@/router";
-import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/components/ui/use-toast";
@@ -29,7 +28,6 @@ export const CREATE_PRODUCT = gql`
 
 function NewProductModal() {
   const modals = useModals();
-  const open = useMemo(() => modals.current === "/new-product", [modals.current]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -72,7 +70,7 @@ function NewProductModal() {
   });
 
   return (
-    <Dialog open={open} onOpenChange={() => modals.close()}>
+    <Dialog defaultOpen onOpenChange={() => modals.close()}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create a new product</DialogTitle>
