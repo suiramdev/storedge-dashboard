@@ -1,6 +1,5 @@
 import { gql, useMutation } from "@apollo/client";
-import { useParams, useModals, useNavigate } from "@/router";
-import { useMemo } from "react";
+import { useParams, useModals } from "@/router";
 import { useToast } from "@/components/ui/use-toast";
 import { PRODUCTS } from "../_components/ProductsTable";
 import {
@@ -30,18 +29,15 @@ function DeleteProductModal() {
   if (!id) id = history.state.usr.product.id;
 
   const modals = useModals();
-  const open = useMemo(() => modals.current === "/products/[id]/delete", [modals.current]);
 
   const { toast } = useToast();
-
-  const navigate = useNavigate();
 
   const [handleDelete] = useMutation(DELETE_PRODUCT, {
     variables: { id },
     refetchQueries: [PRODUCTS],
     onCompleted: () => {
       toast({ title: "Product deleted" });
-      navigate("/products");
+      modals.close({ at: "/products" });
     },
     onError: (error) => {
       toast({ title: "Couldn't delete", description: error.message, variant: "destructive" });
@@ -49,7 +45,13 @@ function DeleteProductModal() {
   });
 
   return (
-    <AlertDialog open={open} onOpenChange={() => modals.close}>
+    <AlertDialog
+      defaultOpen
+      onOpenChange={() => {
+        modals.close();
+        setTimeout(() => (document.body.style.pointerEvents = ""), 100); // Weird fix for #468 shadcn-ui's issue
+      }}
+    >
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Are you sure ?</AlertDialogTitle>
@@ -58,7 +60,7 @@ function DeleteProductModal() {
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={() => modals.close()}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction onClick={() => handleDelete()}>Delete</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
