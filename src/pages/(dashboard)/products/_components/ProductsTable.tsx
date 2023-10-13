@@ -72,8 +72,8 @@ export const columns = [
       <span>
         {getValue()
           ? new Intl.NumberFormat("fr-FR", { style: "currency", currency: row.original.store.currencyCode }).format(
-              getValue()!,
-            )
+            getValue()!,
+          )
           : "-"}
       </span>
     ),
@@ -146,6 +146,12 @@ function ProductsTable() {
       data={data ? data.products : []}
       search={{ columnId: "name", placeholder: "Search by name" }}
       viewable
+      actions={(
+        <Button variant="destructive" size="sm">
+          <TrashIcon className="mr-2 h-4 w-4" />
+          Delete selected products
+        </Button>
+      )}
       paginated
     />
   );

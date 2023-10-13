@@ -10,13 +10,11 @@ import {
   getSortedRowModel,
   getPaginationRowModel,
 } from "@tanstack/react-table";
-// import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import DataTableSearchFilter from "./DataTableSearchFilter";
 import { DataTableViewOptions } from "./DataTableViewOptions";
 import DataTablePagination from "./DataTablePagination";
-import { Button } from "@/components/ui/button";
-import { TrashIcon } from "lucide-react";
+import DataTableActions from "./DataTableActions";
 
 interface DataTableProps<TData> {
   columns: ColumnDef<TData, any>[];
@@ -25,10 +23,11 @@ interface DataTableProps<TData> {
     columnId: string;
   } & React.HTMLAttributes<HTMLInputElement>;
   viewable?: boolean;
+  actions?: React.ReactNode;
   paginated?: boolean;
 }
 
-function DataTable<TData>({ columns, data, search, viewable, paginated }: DataTableProps<TData>) {
+function DataTable<TData>({ columns, data, search, viewable, actions, paginated }: DataTableProps<TData>) {
   const [rowSelection, setRowSelection] = useState({});
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -93,14 +92,7 @@ function DataTable<TData>({ columns, data, search, viewable, paginated }: DataTa
           </TableBody>
         </Table>
       </div>
-      {table.getSelectedRowModel().rows?.length > 0 && (
-        <div className="sticky bottom-0 left-1/2 flex w-fit -translate-x-1/2 flex-wrap gap-2 rounded-sm bg-background p-2">
-          <Button variant="destructive" size="sm">
-            <TrashIcon className="mr-2 h-4 w-4" />
-            Delete selected products
-          </Button>
-        </div>
-      )}
+      {actions && <DataTableActions table={table}>{actions}</DataTableActions>}
       {paginated && <DataTablePagination table={table} />}
     </div>
   );
