@@ -1,8 +1,9 @@
 import * as z from "zod";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useQuery, useMutation } from "@apollo/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams, useNavigate, Link } from "@/router";
 import { useForm } from "react-hook-form";
+import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { ArrowLeftIcon, TrashIcon } from "lucide-react";
@@ -29,6 +30,17 @@ const PRODUCT = gql`
   }
 `;
 
+const UPDATE_PRODUCT = gql`
+  mutation UpdateProduct($where: ProductWhereUniqueInput!, $data: ProductUpdateInput!) {
+    updateOneProduct(where: $where, data: $data) {
+      id
+      name
+      description
+      status
+    }
+  }
+`;
+
 function ProductPage() {
   const { id } = useParams("/products/:id");
 
@@ -45,11 +57,37 @@ function ProductPage() {
     defaultValues: {
       name: "",
       description: "",
-      status: ProductStatus.DRAFT, // Problem is that the reset method doesn't reset this field
+      status: ProductStatus.DRAFT,
     },
   });
 
-  const handleSubmit = form.handleSubmit((data) => console.log(data));
+  const { toast } = useToast();
+
+  const [updateProduct] = useMutation(UPDATE_PRODUCT, {
+    onCompleted: (data) => {
+      form.reset(data.updateOneProduct);
+    },
+    onError: (error) => {
+      toast({
+        title: "Couldn't save changes",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleSubmit = form.handleSubmit((data) =>
+    updateProduct({
+      variables: {
+        where: { id },
+        data: {
+          name: { set: data.name },
+          description: { set: data.description },
+          status: { set: data.status },
+        },
+      },
+    }),
+  );
 
   const navigate = useNavigate();
 
@@ -103,7 +141,7 @@ function ProductPage() {
               render={({ field }) => (
                 <FormItem className="space-y-1">
                   <FormLabel>Status</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a status" />
