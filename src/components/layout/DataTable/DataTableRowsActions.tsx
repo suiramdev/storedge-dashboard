@@ -5,7 +5,7 @@ interface DataTableActionsProps<TData> {
   children: React.ReactNode;
 }
 
-function DataTableActions<TData>({ children, table }: DataTableActionsProps<TData>) {
+function DataTableRowsActions<TData>({ table, children }: DataTableActionsProps<TData>) {
   return (
     table.getSelectedRowModel().rows.length > 0 && (
       <div className="sticky bottom-0 left-1/2 flex w-fit -translate-x-1/2 flex-wrap gap-2 rounded-sm bg-background p-2">
@@ -15,4 +15,4 @@ function DataTableActions<TData>({ children, table }: DataTableActionsProps<TDat
   );
 }
 
-export default DataTableActions;
+export default DataTableRowsActions;

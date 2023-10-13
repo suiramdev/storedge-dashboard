@@ -18,6 +18,7 @@ import DataTableColumnHeader from "@/components/layout/DataTable/DataTableColumn
 import { Badge } from "@/components/ui/badge";
 import { Product, ProductStatus } from "@/types";
 import DeleteProductDialog from "@/components/dialogs/DeleteProductDialog";
+import DeleteProductsDialog from "@/components/dialogs/DeleteProductsDialog";
 
 const PRODUCTS = gql`
   query Products($where: ProductWhereInput) {
@@ -146,11 +147,17 @@ function ProductsTable() {
       data={data ? data.products : []}
       search={{ columnId: "name", placeholder: "Search by name" }}
       viewable
-      actions={(
-        <Button variant="destructive" size="sm">
-          <TrashIcon className="mr-2 h-4 w-4" />
-          Delete selected products
-        </Button>
+      rowsActions={(selectedRows) => (
+        <DeleteProductsDialog ids={selectedRows.map((row) => row.original.id)}>
+          <Button
+            variant="ghost"
+            className="hover:!bg-destructive hover:!text-destructive-foreground"
+            size="sm"
+          >
+            <TrashIcon className="mr-2 h-4 w-4" />
+            Delete selected products
+          </Button>
+        </DeleteProductsDialog>
       )}
       paginated
     />

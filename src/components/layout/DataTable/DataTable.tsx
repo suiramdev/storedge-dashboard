@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ColumnDef,
+  type Row,
   SortingState,
   ColumnFiltersState,
   flexRender,
@@ -14,7 +15,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import DataTableSearchFilter from "./DataTableSearchFilter";
 import { DataTableViewOptions } from "./DataTableViewOptions";
 import DataTablePagination from "./DataTablePagination";
-import DataTableActions from "./DataTableActions";
+import DataTableRowsActions from "./DataTableRowsActions";
 
 interface DataTableProps<TData> {
   columns: ColumnDef<TData, any>[];
@@ -23,11 +24,11 @@ interface DataTableProps<TData> {
     columnId: string;
   } & React.HTMLAttributes<HTMLInputElement>;
   viewable?: boolean;
-  actions?: React.ReactNode;
+  rowsActions?: (selectedRows: Row<TData>[]) => React.ReactNode;
   paginated?: boolean;
 }
 
-function DataTable<TData>({ columns, data, search, viewable, actions, paginated }: DataTableProps<TData>) {
+function DataTable<TData>({ columns, data, search, viewable, rowsActions, paginated }: DataTableProps<TData>) {
   const [rowSelection, setRowSelection] = useState({});
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -47,6 +48,13 @@ function DataTable<TData>({ columns, data, search, viewable, actions, paginated 
       columnFilters,
     },
   });
+
+  // Reset row selection when data changes
+  useEffect(() => {
+    table.setRowSelection({});
+  }, [data]);
+
+  const rowsActionsChildren = useMemo(() => rowsActions && rowsActions(table.getSelectedRowModel().rows), [rowsActions, rowSelection]);
 
   return (
     <div className="flex flex-col space-y-4">
@@ -92,7 +100,7 @@ function DataTable<TData>({ columns, data, search, viewable, actions, paginated 
           </TableBody>
         </Table>
       </div>
-      {actions && <DataTableActions table={table}>{actions}</DataTableActions>}
+      {rowsActionsChildren && <DataTableRowsActions table={table}>{rowsActionsChildren}</DataTableRowsActions>}
       {paginated && <DataTablePagination table={table} />}
     </div>
   );

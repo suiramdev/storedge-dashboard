@@ -15,8 +15,8 @@ import {
 } from "@/components/ui/alert-dialog";
 
 const DELETE_PRODUCTS = gql`
-  mutation DeleteProducts($ids: String[]!) {
-    deleteManyProuctImage(where: { product: { is: { id: { in: $ids } } } }) {
+  mutation DeleteProducts($ids: [String!]) {
+    deleteManyProductImage(where: { product: { is: { id: { in: $ids } } } }) {
       count
     }
     deleteManyProduct(where: { id: { in: $ids } }) {
