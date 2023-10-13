@@ -15,6 +15,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import DataTableSearchFilter from "./DataTableSearchFilter";
 import { DataTableViewOptions } from "./DataTableViewOptions";
 import DataTablePagination from "./DataTablePagination";
+import { Button } from "@/components/ui/button";
+import { TrashIcon } from "lucide-react";
 
 interface DataTableProps<TData> {
   columns: ColumnDef<TData, any>[];
@@ -65,9 +67,7 @@ function DataTable<TData>({ columns, data, search, viewable, paginated }: DataTa
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
+                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                     </TableHead>
                   );
                 })}
@@ -79,9 +79,7 @@ function DataTable<TData>({ columns, data, search, viewable, paginated }: DataTa
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
+                    <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                   ))}
                 </TableRow>
               ))
@@ -95,6 +93,14 @@ function DataTable<TData>({ columns, data, search, viewable, paginated }: DataTa
           </TableBody>
         </Table>
       </div>
+      {table.getSelectedRowModel().rows?.length > 0 && (
+        <div className="sticky bottom-0 left-1/2 flex w-fit -translate-x-1/2 flex-wrap gap-2 rounded-sm bg-background p-2">
+          <Button variant="destructive" size="sm">
+            <TrashIcon className="mr-2 h-4 w-4" />
+            Delete selected products
+          </Button>
+        </div>
+      )}
       {paginated && <DataTablePagination table={table} />}
     </div>
   );
