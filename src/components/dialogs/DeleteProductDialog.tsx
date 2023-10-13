@@ -1,9 +1,10 @@
 import { gql, useMutation } from "@apollo/client";
-import { useParams, useModals } from "@/router";
+import { AlertDialogProps } from "@radix-ui/react-alert-dialog";
+import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import { PRODUCTS } from "../_components/ProductsTable";
 import {
   AlertDialog,
+  AlertDialogTrigger,
   AlertDialogContent,
   AlertDialogHeader,
   AlertDialogTitle,
@@ -24,20 +25,25 @@ const DELETE_PRODUCT = gql`
   }
 `;
 
-function DeleteProductModal() {
-  let { id } = useParams("/products/:id");
-  if (!id) id = history.state.usr.product.id;
+interface DeleteProductDialogProps extends AlertDialogProps {
+  id: string;
+  onCompleted?: () => void;
+  open?: boolean;
+  onOpenChange?: (value: boolean) => void;
+  children?: React.ReactNode;
+}
 
-  const modals = useModals();
-
+function DeleteProductDialog({ id, onCompleted, open, onOpenChange, children, ...props }: DeleteProductDialogProps) {
+  const [show, setShow] = useState(false);
   const { toast } = useToast();
 
   const [handleDelete] = useMutation(DELETE_PRODUCT, {
     variables: { id },
-    refetchQueries: [PRODUCTS],
+    refetchQueries: ["Products"],
     onCompleted: () => {
       toast({ title: "Product deleted" });
-      modals.close({ at: "/products" });
+      onOpenChange ? onOpenChange(false) : setShow(false);
+      onCompleted && onCompleted();
     },
     onError: (error) => {
       toast({ title: "Couldn't delete", description: error.message, variant: "destructive" });
@@ -46,12 +52,14 @@ function DeleteProductModal() {
 
   return (
     <AlertDialog
-      defaultOpen
-      onOpenChange={() => {
-        modals.close();
-        setTimeout(() => (document.body.style.pointerEvents = ""), 100); // Weird fix for #468 shadcn-ui's issue
+      {...props}
+      open={open ?? show}
+      onOpenChange={(value) => {
+        onOpenChange ? onOpenChange(value) : setShow(value);
+        setTimeout(() => (document.body.style.pointerEvents = ""), 200); // Weird fix for #468 shadcn-ui's issue
       }}
     >
+      {children && <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>}
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Are you sure ?</AlertDialogTitle>
@@ -68,4 +76,4 @@ function DeleteProductModal() {
   );
 }
 
-export default DeleteProductModal;
+export default DeleteProductDialog;

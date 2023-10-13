@@ -1,13 +1,12 @@
 import * as z from "zod";
 import { gql, useMutation } from "@apollo/client";
-import { useModals } from "@/router";
+import { DialogProps } from "@radix-ui/react-dialog";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/components/ui/use-toast";
-import { STORES as STORES_SELECTION } from "@/components/layout/StoreSelection";
-import { STORES as STORES_SWITCHER } from "@/components/switchers/StoreSwitcher";
 import { useSession } from "@/providers/session";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -29,8 +28,14 @@ const CREATE_STORE = gql`
   }
 `;
 
-function NewStoreModal() {
-  const modals = useModals();
+interface CreateProductDialogProps extends DialogProps {
+  open?: boolean;
+  onOpenChange?: (value: boolean) => void;
+  children?: React.ReactNode;
+}
+
+function CreateStoreDialog({ open, onOpenChange, children, ...props }: CreateProductDialogProps) {
+  const [show, setShow] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -44,11 +49,11 @@ function NewStoreModal() {
   const { toast } = useToast();
 
   const [createStore] = useMutation(CREATE_STORE, {
-    refetchQueries: [STORES_SELECTION, STORES_SWITCHER],
+    refetchQueries: ["Stores"],
     onCompleted: (data) => {
       selectStore(data.createOneStore.id);
       toast({ title: "Store created", description: `${data.createOneStore.name} store has been created` });
-      modals.close();
+      onOpenChange ? onOpenChange(false) : setShow(false);
     },
     onError: (error) => {
       toast({ title: "Couldn't create", description: error.message, variant: "destructive" });
@@ -70,12 +75,12 @@ function NewStoreModal() {
   });
 
   return (
-    <Dialog defaultOpen onOpenChange={() => modals.close()}>
+    <Dialog {...props} open={open ?? show} onOpenChange={onOpenChange ?? setShow}>
+      {children && <DialogTrigger asChild>{children}</DialogTrigger>}
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create a new store</DialogTitle>
         </DialogHeader>
-
         <Form {...form}>
           <form onSubmit={handleSubmit} className="space-y-2">
             <FormField
@@ -136,4 +141,4 @@ function NewStoreModal() {
   );
 }
 
-export default NewStoreModal;
+export default CreateStoreDialog;

@@ -1,7 +1,7 @@
 import * as z from "zod";
 import { gql, useQuery } from "@apollo/client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useParams, Link, useModals } from "@/router";
+import { useParams, useNavigate, Link } from "@/router";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ProductStatus } from "@/types";
+import DeleteProductDialog from "@/components/dialogs/DeleteProductDialog";
 
 const formSchema = z.object({
   name: z.string().trim().min(3).max(255),
@@ -17,7 +18,7 @@ const formSchema = z.object({
   status: z.enum([ProductStatus.PUBLISHED, ProductStatus.DRAFT]),
 });
 
-export const PRODUCT = gql`
+const PRODUCT = gql`
   query Product($id: String!) {
     product(where: { id: $id }) {
       id
@@ -30,20 +31,27 @@ export const PRODUCT = gql`
 
 function ProductPage() {
   const { id } = useParams("/products/:id");
-  const modals = useModals();
 
-  const { data } = useQuery(PRODUCT, { variables: { id } });
+  const { error } = useQuery(PRODUCT, {
+    variables: { id },
+    onCompleted: (data) => {
+      form.reset(data.product);
+    },
+  });
+  if (error) throw error;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
       description: "",
-      status: ProductStatus.DRAFT,
+      status: ProductStatus.DRAFT, // Problem is that the reset method doesn't reset this field
     },
   });
 
   const handleSubmit = form.handleSubmit((data) => console.log(data));
+
+  const navigate = useNavigate();
 
   return (
     <Form {...form}>
@@ -110,15 +118,12 @@ function ProductPage() {
                 </FormItem>
               )}
             />
-            <Button
-              type="button"
-              variant="destructive"
-              className="w-full"
-              onClick={() => modals.open("/products/[id]/delete")}
-            >
-              <TrashIcon className="mr-2 h-4 w-4" />
-              Delete
-            </Button>
+            <DeleteProductDialog id={id} onCompleted={() => navigate("/products")}>
+              <Button type="button" variant="destructive" className="w-full">
+                <TrashIcon className="mr-2 h-4 w-4" />
+                Delete
+              </Button>
+            </DeleteProductDialog>
           </div>
         </div>
       </form>

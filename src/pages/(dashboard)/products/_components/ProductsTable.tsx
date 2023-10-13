@@ -9,15 +9,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Link, useModals } from "@/router";
+import { useState } from "react";
+import { Link } from "@/router";
 import { Button } from "@/components/ui/button";
 import { CopyIcon, MoreHorizontal, PencilIcon, TrashIcon } from "lucide-react";
 import DataTable from "@/components/layout/DataTable";
 import DataTableColumnHeader from "@/components/layout/DataTable/DataTableColumnHeader";
 import { Badge } from "@/components/ui/badge";
 import { Product, ProductStatus } from "@/types";
+import DeleteProductDialog from "@/components/dialogs/DeleteProductDialog";
 
-export const PRODUCTS = gql`
+const PRODUCTS = gql`
   query Products($where: ProductWhereInput) {
     products(where: $where) {
       id
@@ -87,7 +89,7 @@ export const columns = [
     cell: ({ row }) => {
       const product = row.original;
 
-      const modals = useModals();
+      const [deleteDialogOpened, openDeleteDialog] = useState(false);
 
       return (
         <div className="flex justify-end">
@@ -112,13 +114,14 @@ export const columns = [
               </Link>
               <DropdownMenuItem
                 className="hover:!bg-destructive hover:!text-destructive-foreground"
-                onClick={() => modals.open("/products/[id]/delete", { state: { product: { id: product.id } } })}
+                onClick={() => openDeleteDialog(true)}
               >
                 <TrashIcon className="mr-2 h-4 w-4" />
                 Delete
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          <DeleteProductDialog id={product.id} open={deleteDialogOpened} onOpenChange={openDeleteDialog} />
         </div>
       );
     },

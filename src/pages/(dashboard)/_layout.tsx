@@ -1,16 +1,16 @@
 import { useSession, SessionStatus } from "@/providers/session";
 import { useShallow } from "zustand/react/shallow";
+import LoginPage from "@/pages/_login";
+import StoreSelectionPage from "@/pages/_store-selection";
 import Topbar from "@/components/layout/Topbar";
 import Sidebar from "@/components/layout/Sidebar";
 import { Outlet } from "react-router-dom";
-import Login from "@/components/layout/Login";
-import StoreSelection from "@/components/layout/StoreSelection";
 
 function Layout() {
   const { status, selectedStoreId } = useSession(useShallow((state) => ({ status: state.status, selectedStoreId: state.selectedStoreId })));
 
-  if (status !== SessionStatus.AUTHENTICATED) return <Login />;
-  if (!selectedStoreId) return <StoreSelection />;
+  if (status !== SessionStatus.AUTHENTICATED) return <LoginPage />;
+  if (!selectedStoreId) return <StoreSelectionPage />;
 
   return (
     <div className="relative flex min-h-screen flex-col">

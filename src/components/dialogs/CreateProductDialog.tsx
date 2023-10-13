@@ -1,12 +1,12 @@
 import * as z from "zod";
 import { gql, useMutation } from "@apollo/client";
-import { useModals } from "@/router";
+import { DialogProps } from "@radix-ui/react-dialog";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/components/ui/use-toast";
-import { PRODUCTS } from "./products/_components/ProductsTable";
 import { useSession } from "@/providers/session";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -17,7 +17,7 @@ const formSchema = z.object({
   description: z.string().optional(),
 });
 
-export const CREATE_PRODUCT = gql`
+const CREATE_PRODUCT = gql`
   mutation CreateProduct($data: ProductCreateInput!) {
     createOneProduct(data: $data) {
       id
@@ -26,8 +26,14 @@ export const CREATE_PRODUCT = gql`
   }
 `;
 
-function NewProductModal() {
-  const modals = useModals();
+interface CreateProductDialogProps extends DialogProps {
+  open?: boolean;
+  onOpenChange?: (value: boolean) => void;
+  children?: React.ReactNode;
+}
+
+function CreateProductDialog({ open, onOpenChange, children, ...props }: CreateProductDialogProps) {
+  const [show, setShow] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -40,10 +46,10 @@ function NewProductModal() {
   const { toast } = useToast();
 
   const [createProduct] = useMutation(CREATE_PRODUCT, {
-    refetchQueries: [PRODUCTS],
+    refetchQueries: ["Products"],
     onCompleted: (data) => {
       toast({ title: "Product created", description: `${data.createOneProduct.name} has been created` });
-      modals.close();
+      onOpenChange ? onOpenChange(false) : setShow(false);
     },
     onError: (error) => {
       toast({ title: "Couldn't create", description: error.message, variant: "destructive" });
@@ -70,7 +76,8 @@ function NewProductModal() {
   });
 
   return (
-    <Dialog defaultOpen onOpenChange={() => modals.close()}>
+    <Dialog {...props} open={open ?? show} onOpenChange={onOpenChange ?? setShow}>
+      {children && <DialogTrigger asChild>{children}</DialogTrigger>}
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create a new product</DialogTitle>
@@ -115,4 +122,4 @@ function NewProductModal() {
   );
 }
 
-export default NewProductModal;
+export default CreateProductDialog;
