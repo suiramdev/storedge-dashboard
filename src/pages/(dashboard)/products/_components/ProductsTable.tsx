@@ -1,6 +1,7 @@
 import { gql, useQuery } from "@apollo/client";
 import { useSession } from "@/providers/session";
 import { createColumnHelper } from "@tanstack/react-table";
+import { Product, ProductStatus } from "@/types";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
@@ -16,7 +17,6 @@ import { CopyIcon, MoreHorizontal, PencilIcon, TrashIcon } from "lucide-react";
 import DataTable from "@/components/layout/DataTable";
 import DataTableColumnHeader from "@/components/layout/DataTable/DataTableColumnHeader";
 import { Badge } from "@/components/ui/badge";
-import { Product, ProductStatus } from "@/types";
 import DeleteProductDialog from "@/components/dialogs/DeleteProductDialog";
 import DeleteProductsDialog from "@/components/dialogs/DeleteProductsDialog";
 

@@ -1,6 +1,12 @@
-export type Store = {
-  id: string;
-  name: string;
-  description?: string;
-  currencyCode: string;
-};
+import * as z from "zod";
+
+export const storeCurrencyCodeSchema = z.enum([ "EUR" ]);
+export type StoreCurrencyCode = z.infer<typeof storeCurrencyCodeSchema>;
+
+export const storeSchema = z.object({
+  id: z.string(),
+  name: z.string().trim().min(3, "Store name cannot be empty").max(255),
+  description: z.string().optional(),
+  currencyCode: storeCurrencyCodeSchema,
+});
+export type Store = z.infer<typeof storeSchema>;

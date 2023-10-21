@@ -1,0 +1,51 @@
+import { useFormContext } from "react-hook-form";
+import { useNavigate } from "@/router";
+import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ProductStatus } from "@/types";
+import DeleteProductDialog from "@/components/dialogs/DeleteProductDialog";
+import { Button } from "@/components/ui/button";
+import { TrashIcon } from "lucide-react";
+
+interface ProductStatusCardProps {
+  id: string;
+}
+
+function ProductStatusCard({ id }: ProductStatusCardProps) {
+  const form = useFormContext();
+  const navigate = useNavigate();
+
+  return (
+    <div className="col-span-2 h-fit space-y-4 rounded-lg border bg-background px-4 py-6">
+      <FormField
+        control={form.control}
+        name="status"
+        render={({ field }) => (
+          <FormItem className="space-y-1">
+            <FormLabel>Status</FormLabel>
+            <Select onValueChange={field.onChange} value={field.value}>
+              <FormControl>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a status" />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                <SelectItem value={ProductStatus.DRAFT}>{ProductStatus.DRAFT}</SelectItem>
+                <SelectItem value={ProductStatus.PUBLISHED}>{ProductStatus.PUBLISHED}</SelectItem>
+              </SelectContent>
+            </Select>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <DeleteProductDialog id={id} onCompleted={() => navigate("/products")}>
+        <Button type="button" variant="destructive" className="w-full">
+          <TrashIcon className="mr-2 h-4 w-4" />
+          Delete
+        </Button>
+      </DeleteProductDialog>
+    </div>
+  );
+}
+
+export default ProductStatusCard;
