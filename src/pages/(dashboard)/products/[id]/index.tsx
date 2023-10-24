@@ -95,6 +95,10 @@ function ProductPage() {
   const [updateProduct] = useMutation(UPDATE_PRODUCT, {
     onCompleted: (data) => {
       form.reset(data.updateOneProduct);
+      toast({
+        title: "Changes saved",
+        description: "Your changes have been saved.",
+      });
     },
     onError: (error) => {
       toast({
