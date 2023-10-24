@@ -2,8 +2,7 @@ import { gql, useQuery, useMutation } from "@apollo/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams, Link } from "@/router";
 import { useForm } from "react-hook-form";
-import * as z from "zod";
-import { productSchema } from "@/types";
+import { Product, productSchema } from "@/types";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
@@ -11,7 +10,6 @@ import { ArrowLeftIcon } from "lucide-react";
 import { ProductStatus } from "@/types";
 import ProductDetailsCard from "./_components/ProductDetailsCard";
 import ProductStatusCard from "./_components/ProductStatusCard";
-import ProductOptionsCard from "./_components/ProductOptionsCard";
 import ProductVariantsCard from "./_components/ProductVariantsCard";
 
 const PRODUCT = gql`
@@ -24,6 +22,10 @@ const PRODUCT = gql`
       options {
         id
         name
+        values {
+          id
+          value
+        }
       }
     }
   }
@@ -55,7 +57,7 @@ function ProductPage() {
   });
   if (error) throw error;
 
-  const form = useForm<z.infer<typeof productSchema>>({
+  const form = useForm<Product>({
     resolver: zodResolver(productSchema),
     defaultValues: {
       name: "",
@@ -81,23 +83,43 @@ function ProductPage() {
     },
   });
 
-  const handleSubmit = form.handleSubmit((data) =>
-    updateProduct({
-      variables: {
-        where: { id },
-        data: {
-          name: { set: data.name },
-          description: { set: data.description },
-          status: { set: data.status },
-          options: {
-            connectOrCreate: data.options.map((option) => ({
-              where: { id: option.id },
-              create: { name: option.name },
-            })),
+  const handleSubmit = form.handleSubmit(
+    (data) => {
+      updateProduct({
+        variables: {
+          where: { id },
+          data: {
+            name: { set: data.name },
+            description: { set: data.description },
+            status: { set: data.status },
+            options: {
+              upsert: data.options.map((option) => ({
+                where: { id: option.id },
+                update: {
+                  name: { set: option.name },
+                  values: {
+                    upsert: option.values.map((value) => ({
+                      where: { id: value.id },
+                      update: { value: { set: value.value } },
+                      create: { value: value.value },
+                    })),
+                  },
+                },
+                create: {
+                  name: option.name,
+                  values: {
+                    createMany: {
+                      data: option.values.map((value) => ({ value: value.value })),
+                    },
+                  },
+                },
+              })),
+            },
           },
         },
-      },
-    }),
+      });
+    },
+    (errors) => console.log(errors),
   );
 
   return (
@@ -117,7 +139,6 @@ function ProductPage() {
           </div>
           <ProductDetailsCard />
           <ProductStatusCard id={id} />
-          <ProductOptionsCard />
           <ProductVariantsCard />
         </div>
       </form>

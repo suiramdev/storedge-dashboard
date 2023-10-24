@@ -14,36 +14,36 @@ export const productImageSchema = z.object({
 });
 export type ProductImage = z.infer<typeof productImageSchema>;
 
-export const productOptionSchema = z.object({
-  id: z.string(),
-  name: z.string().trim().min(3, "Option name cannot be empty").max(255),
-});
-export type ProductOption = z.infer<typeof productOptionSchema>;
-
 export const productVariantSchema = z.object({
   id: z.string(),
-  name: z.string().trim().min(3, "Variant name cannot be empty").max(255),
+  name: z.string().trim().min(3, "Variant name must be at least 3 characters long").max(255),
   stock: z.number().min(0, "Stock cannot be negative"),
   price: z.number().min(0, "Price cannot be negative"),
-  values: z.array(
-    z.object({
-      id: z.string().optional(),
-      optionId: z.string(),
-      value: z.string().trim().min(3, "Option value cannot be empty").max(255),
-    }),
-  ),
 });
 export type ProductVariant = z.infer<typeof productVariantSchema>;
 
+export const productOptionValueSchema = z.object({
+  id: z.string(),
+  value: z.string().trim().min(3, "Option value must be at least 3 characters long").max(255),
+});
+export type ProductOptionValue = z.infer<typeof productOptionValueSchema>;
+
+export const productOptionSchema = z.object({
+  id: z.string(),
+  name: z.string().trim().min(3, "Option name must be at least 3 characters long").max(255),
+  values: z.array(productOptionValueSchema).min(2, "Option must have at least two values")
+});
+export type ProductOption = z.infer<typeof productOptionSchema>;
+
 export const productSchema = z.object({
   id: z.string(),
-  name: z.string().trim().min(3, "Product name cannot be empty").max(255),
-  description: z.string(),
+  name: z.string().trim().min(3, "Product name must be at least 3 characters long").max(255),
+  description: z.string().optional(),
   status: productStatusSchema,
   avgPrice: z.number().optional(),
-  images: z.array(productImageSchema),
-  options: z.array(productOptionSchema),
-  variants: z.array(productVariantSchema),
-  store: storeSchema,
+  images: z.array(productImageSchema).default([]),
+  options: z.array(productOptionSchema).default([]),
+  variants: z.array(productVariantSchema).default([]),
+  store: storeSchema.optional(),
 });
 export type Product = z.infer<typeof productSchema>;
