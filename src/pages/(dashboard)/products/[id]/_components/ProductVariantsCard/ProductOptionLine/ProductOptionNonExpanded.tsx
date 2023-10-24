@@ -13,14 +13,22 @@ import { GripVerticalIcon, MoreVerticalIcon, PencilIcon, TrashIcon } from "lucid
 
 interface ProductOptionNonExpandedProps {
   index: number;
-  onEdit?: () => void;
-  onDelete?: () => void;
+  onEdited?: (option: ProductOption) => void;
+  onDeleted?: (option: ProductOption) => void;
   className?: string;
 }
 
-function ProductOptionNonExpanded({ index, onEdit, onDelete, className }: ProductOptionNonExpandedProps) {
+function ProductOptionNonExpanded({ index: optionIndex, onEdited, onDeleted, className }: ProductOptionNonExpandedProps) {
   const form = useFormContext();
-  const option: ProductOption = form.watch(`options.${index}`);
+  const option: ProductOption = form.watch(`options.${optionIndex}`);
+
+  const handleEdit = () => {
+    onEdited?.(option);
+  };
+
+  const handleDelete = () => {
+    onDeleted?.(option);
+  };
 
   return option && (
     <div className={clsx("flex items-center space-x-4", className)}>
@@ -44,11 +52,11 @@ function ProductOptionNonExpanded({ index, onEdit, onDelete, className }: Produc
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem onClick={onEdit}>
+          <DropdownMenuItem onClick={handleEdit}>
             <PencilIcon className="mr-2 h-4 w-4" />
             Edit
           </DropdownMenuItem>
-          <DropdownMenuItem className="hover:!bg-destructive hover:!text-destructive-foreground" onClick={onDelete}>
+          <DropdownMenuItem className="hover:!bg-destructive hover:!text-destructive-foreground" onClick={handleDelete}>
             <TrashIcon className="mr-2 h-4 w-4" />
             Delete
           </DropdownMenuItem>

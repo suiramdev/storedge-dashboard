@@ -1,38 +1,43 @@
+import { ProductOption, ProductOptionValue } from "@/types";
 import { useFormContext, useFieldArray } from "react-hook-form";
 import { useState } from "react";
 import ProductOptionExpanded from "./ProductOptionExpanded";
 import ProductOptionNonExpanded from "./ProductOptionNonExpanded";
 
-interface ProductOptionProps {
+interface ProductOptionLineProps {
   index: number;
+  onDeleted?: (option: ProductOption) => void;
+  onValueDeleted?: (value: ProductOptionValue) => void;
   expand?: boolean;
   className?: string;
 }
 
-function ProductOption({ index, expand = false, ...props }: ProductOptionProps) {
+function ProductOptionLine({ index, onDeleted, onValueDeleted, expand = false, ...props }: ProductOptionLineProps) {
   const [expanded, setExpanded] = useState(expand);
   const form = useFormContext();
   const options = useFieldArray({ control: form.control, name: "options" });
 
-  const onDelete = () => {
+  const handleDelete = (option: ProductOption) => {
     options.remove(index);
+    onDeleted?.(option);
   };
 
   return expanded ? (
     <ProductOptionExpanded
       index={index}
-      onSave={() => setExpanded(false)}
-      onDelete={onDelete}
+      onSaved={() => setExpanded(false)}
+      onDeleted={handleDelete}
+      onValueDeleted={onValueDeleted}
       {...props}
     />
   ) : (
     <ProductOptionNonExpanded
       index={index}
-      onEdit={() => setExpanded(true)}
-      onDelete={onDelete}
+      onEdited={() => setExpanded(true)}
+      onDeleted={handleDelete}
       {...props}
     />
   );
 }
 
-export default ProductOption;
+export default ProductOptionLine;

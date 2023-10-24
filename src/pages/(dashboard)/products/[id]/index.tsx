@@ -1,9 +1,9 @@
-import { gql, useQuery, useMutation } from "@apollo/client";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { gql, useQuery, useMutation } from "@apollo/client"; import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams, Link } from "@/router";
 import { useForm } from "react-hook-form";
-import { Product, productSchema } from "@/types";
+import { Product, ProductOption, ProductOptionValue, productSchema } from "@/types";
 import { useToast } from "@/components/ui/use-toast";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { ArrowLeftIcon } from "lucide-react";
@@ -31,6 +31,25 @@ const PRODUCT = gql`
   }
 `;
 
+const DELETE_PRODUCT_OPTIONS = gql`
+  mutation DeleteProductOptions($where: ProductOptionWhereInput!) {
+    deleteManyProductOptionValue(where: { option: { is: $where } }) {
+      count
+    }
+    deleteManyProductOption(where: $where) {
+      count
+    }
+  }
+`;
+
+const DELETE_PRODUCT_OPTIONS_VALUES = gql`
+  mutation DeleteProductOptionsValues($where: ProductOptionValueWhereInput!) {
+    deleteManyProductOptionValue(where: $where) {
+      count
+    }
+  }
+`;
+
 const UPDATE_PRODUCT = gql`
   mutation UpdateProduct($where: ProductWhereUniqueInput!, $data: ProductUpdateInput!) {
     updateOneProduct(where: $where, data: $data) {
@@ -41,6 +60,10 @@ const UPDATE_PRODUCT = gql`
       options {
         id
         name
+        values {
+          id
+          value
+        }
       }
     }
   }
@@ -49,8 +72,7 @@ const UPDATE_PRODUCT = gql`
 function ProductPage() {
   const { id } = useParams("/products/:id");
 
-  const { error } = useQuery(PRODUCT, {
-    variables: { id },
+  const { error } = useQuery(PRODUCT, { variables: { id },
     onCompleted: (data) => {
       form.reset(data.product);
     },
@@ -83,8 +105,26 @@ function ProductPage() {
     },
   });
 
+  const [deletedOptions, setDeletedOptions] = useState<String[]>([]);
+  const [deletedOptionsValues, setDeletedOptionsValues] = useState<String[]>([]);
+
+  const [deleteOptions] = useMutation(DELETE_PRODUCT_OPTIONS, {
+    variables: {
+      where: { id: { in: deletedOptions } },
+    },
+  });
+
+  const [deleteOptionsValues] = useMutation(DELETE_PRODUCT_OPTIONS_VALUES, {
+    variables: {
+      where: { id: { in: deletedOptionsValues } },
+    },
+  });
+
   const handleSubmit = form.handleSubmit(
     (data) => {
+      if (deletedOptions.length > 0) deleteOptions();
+      if (deletedOptionsValues.length > 0) deleteOptionsValues();
+
       updateProduct({
         variables: {
           where: { id },
@@ -122,6 +162,14 @@ function ProductPage() {
     (errors) => console.log(errors),
   );
 
+  const handleOptionDelete = (option: ProductOption) => {
+    setDeletedOptions([...deletedOptions, option.id]);
+  };
+
+  const handleOptionValueDelete = (value: ProductOptionValue) => {
+    setDeletedOptionsValues([...deletedOptionsValues, value.id]);
+  };
+
   return (
     <Form {...form}>
       <form onSubmit={handleSubmit}>
@@ -139,7 +187,7 @@ function ProductPage() {
           </div>
           <ProductDetailsCard />
           <ProductStatusCard id={id} />
-          <ProductVariantsCard />
+          <ProductVariantsCard onOptionDeleted={handleOptionDelete} onOptionValueDeleted={handleOptionValueDelete} />
         </div>
       </form>
     </Form>
