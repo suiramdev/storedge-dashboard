@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 
 const formSchema = z.object({
-  name: z.string().trim().min(3, "Name must be at least 3 character"),
+  name: z.string().trim().min(1, "Name must be at least 3 characters").max(255, "Name must not exceed 255 characters"),
   description: z.string().optional(),
   price: z.coerce.number().min(0),
 });

@@ -3,7 +3,7 @@ import { Product, relatedProductModel } from "@/types";
 
 export const productVariantModel = z.object({
   id: z.string().uuid(),
-  name: z.string().trim().min(1).max(255),
+  name: z.string().trim().min(1, "Name must be at least 3 characters").max(255, "Name must not exceed 255 characters"),
   description: z.string().optional(),
   price: z.coerce.number().positive(),
   stock: z.coerce.number().min(0).int(),
