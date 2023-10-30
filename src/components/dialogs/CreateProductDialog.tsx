@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 const formSchema = z.object({
   name: z.string().trim().min(3, "Name must be at least 3 character"),
   description: z.string().optional(),
+  price: z.coerce.number().positive(),
 });
 
 const CREATE_PRODUCT = gql`
@@ -40,6 +41,7 @@ function CreateProductDialog({ open, onOpenChange, children, ...props }: CreateP
     defaultValues: {
       name: "",
       description: "",
+      price: 0,
     },
   });
 
@@ -64,6 +66,8 @@ function CreateProductDialog({ open, onOpenChange, children, ...props }: CreateP
         data: {
           name: data.name,
           description: data.description,
+          // NOTE: A Decimal from decimal.js is expected by the request, so we convert it to a string.
+          price: data.price.toString(),
           status: "Draft",
           store: {
             connect: {
@@ -105,6 +109,19 @@ function CreateProductDialog({ open, onOpenChange, children, ...props }: CreateP
                   <FormLabel>Description</FormLabel>
                   <FormControl>
                     <Textarea {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="price"
+              render={({ field }) => (
+                <FormItem className="space-y-1">
+                  <FormLabel>Price</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Amount" type="number" min="0.01" step="1" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

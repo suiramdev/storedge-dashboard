@@ -16,13 +16,10 @@ import {
 
 const DELETE_PRODUCT = gql`
   mutation DeleteProduct($id: String!) {
-    deleteManyProductOptionValue(where: { option: { is: { product: { is: { id: { equals: $id } } } } } }) {
+    deleteManyProductVariant(where: { productId: { equals: $id } }) {
       count
     }
-    deleteManyProductOption(where: { product: { is: { id: { equals: $id } } } }) {
-      count
-    }
-    deleteManyProductImage(where: { product: { is: { id: { equals: $id } } } }) {
+    deleteManyProductImage(where: { productId: { equals: $id } }) {
       count
     }
     deleteOneProduct(where: { id: $id }) {
