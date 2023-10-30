@@ -22,7 +22,14 @@ function ProductVariantsCard({ onVariantRemoved }: ProductVariantsCardProps) {
           variant="ghost"
           size="sm"
           onClick={() =>
-            variants.append({ id: uuid(), name: "", description: "", price: 0, stock: 0, newlyAdded: true })
+            variants.append({
+              id: uuid(),
+              name: "",
+              description: "",
+              price: form.getValues("price"),
+              stock: 0,
+              newlyAdded: true,
+            })
           }
         >
           <PlusIcon className="mr-2 h-4 w-4" /> Add variant

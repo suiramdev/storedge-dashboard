@@ -19,6 +19,7 @@ const PRODUCT = gql`
       id
       name
       description
+      price
       status
       variants {
         id
@@ -36,6 +37,7 @@ const UPDATE_PRODUCT = gql`
       id
       name
       description
+      price
       status
       variants {
         id
@@ -64,6 +66,7 @@ function ProductPage() {
     defaultValues: {
       name: "",
       description: "",
+      price: 0,
       status: ProductStatus.DRAFT,
       variants: [],
     },
@@ -98,6 +101,8 @@ function ProductPage() {
           data: {
             name: { set: data.name },
             description: { set: data.description },
+            // NOTE: A Decimal from decimal.js is expected by the request, so we convert it to a string.
+            price: { set: data.price.toString() },
             status: { set: data.status },
             variants: {
               deleteMany: {
@@ -108,12 +113,14 @@ function ProductPage() {
                 update: {
                   name: { set: variant.name },
                   // description: { set: variant.description }, BUG: The description field is empty
-                  price: { set: variant.price },
+                  // NOTE: A Decimal from decimal.js is expected by the request, so we convert it to a string.
+                  price: { set: variant.price.toString() },
                   stock: { set: variant.stock },
                 },
                 create: {
                   name: variant.name,
-                  price: variant.price,
+                  // NOTE: A Decimal from decimal.js is expected by the request, so we convert it to a string.
+                  price: variant.price.toString(),
                   // description: variant.description,
                   stock: variant.stock,
                 },

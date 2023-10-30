@@ -19,7 +19,10 @@ export const productModel = z.object({
   id: z.string().uuid(),
   name: z.string().trim().min(1).max(255),
   description: z.string().optional(),
+  price: z.coerce.number().positive().default(0),
+  minPrice: z.number().optional(),
   avgPrice: z.number().optional(),
+  maxPrice: z.number().optional(),
   status: z.nativeEnum(ProductStatus),
 });
 

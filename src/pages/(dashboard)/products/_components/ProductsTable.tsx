@@ -72,9 +72,9 @@ const columns = [
     cell: ({ row, getValue }) => (
       <span>
         {getValue()
-          ? new Intl.NumberFormat("fr-FR", { style: "currency", currency: row.original.store.currencyCode }).format(
-            getValue()!,
-          )
+          ? new Intl.NumberFormat("fr-FR", { style: "currency", currency: row.original.store?.currencyCode }).format(
+              getValue()!,
+            )
           : "-"}
       </span>
     ),
@@ -149,11 +149,7 @@ function ProductsTable() {
       viewable
       rowsActions={(selectedRows) => (
         <DeleteProductsDialog ids={selectedRows.map((row) => row.original.id)}>
-          <Button
-            variant="ghost"
-            className="hover:!bg-destructive hover:!text-destructive-foreground"
-            size="sm"
-          >
+          <Button variant="ghost" className="hover:!bg-destructive hover:!text-destructive-foreground" size="sm">
             <TrashIcon className="mr-2 h-4 w-4" />
             Delete selected products
           </Button>

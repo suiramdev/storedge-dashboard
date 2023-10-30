@@ -5,8 +5,8 @@ export const productVariantModel = z.object({
   id: z.string().uuid(),
   name: z.string().trim().min(1).max(255),
   description: z.string().optional(),
-  price: z.coerce.string(),
-  stock: z.coerce.number().int(),
+  price: z.coerce.number().positive(),
+  stock: z.coerce.number().min(0).int(),
   newlyAdded: z.boolean().default(false),
 });
 
