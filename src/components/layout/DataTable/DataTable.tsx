@@ -11,6 +11,7 @@ import {
   getSortedRowModel,
   getPaginationRowModel,
 } from "@tanstack/react-table";
+import clsx from "clsx";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import DataTableSearchFilter from "./DataTableSearchFilter";
 import { DataTableViewOptions } from "./DataTableViewOptions";
@@ -26,9 +27,10 @@ interface DataTableProps<TData> {
   viewable?: boolean;
   rowsActions?: (selectedRows: Row<TData>[]) => React.ReactNode;
   paginated?: boolean;
+  className?: string;
 }
 
-function DataTable<TData>({ columns, data, search, viewable, rowsActions, paginated }: DataTableProps<TData>) {
+function DataTable<TData>({ columns, data, search, viewable, rowsActions, paginated, className }: DataTableProps<TData>) {
   const [rowSelection, setRowSelection] = useState({});
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -54,18 +56,23 @@ function DataTable<TData>({ columns, data, search, viewable, rowsActions, pagina
     table.setRowSelection({});
   }, [data]);
 
-  const rowsActionsChildren = useMemo(() => rowsActions && rowsActions(table.getSelectedRowModel().rows), [rowsActions, rowSelection]);
+  const rowsActionsChildren = useMemo(
+    () => rowsActions && rowsActions(table.getSelectedRowModel().rows),
+    [rowsActions, rowSelection],
+  );
 
   return (
-    <div className="flex flex-col space-y-4">
-      <div className="grid grid-cols-2">
-        <div className="flex items-center space-x-2">
-          {search && <DataTableSearchFilter table={table} {...search} />}
+    <div className={clsx("flex flex-col space-y-4", className)}>
+      {(search || viewable) && (
+        <div className="grid grid-cols-2">
+          <div className="flex items-center space-x-2">
+            {search && <DataTableSearchFilter table={table} {...search} />}
+          </div>
+          <div className="flex items-center space-x-2 justify-self-end">
+            {viewable && <DataTableViewOptions table={table} />}
+          </div>
         </div>
-        <div className="flex items-center space-x-2 justify-self-end">
-          {viewable && <DataTableViewOptions table={table} />}
-        </div>
-      </div>
+      )}
       <div className="rounded-md border">
         <Table>
           <TableHeader>

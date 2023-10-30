@@ -13,7 +13,7 @@ import {
 import { useState } from "react";
 import { Link } from "@/router";
 import { Button } from "@/components/ui/button";
-import { CopyIcon, MoreHorizontal, PencilIcon, TrashIcon } from "lucide-react";
+import { CopyIcon, MoreVerticalIcon, PencilIcon, TrashIcon } from "lucide-react";
 import DataTable from "@/components/layout/DataTable";
 import DataTableColumnHeader from "@/components/layout/DataTable/DataTableColumnHeader";
 import { Badge } from "@/components/ui/badge";
@@ -40,7 +40,7 @@ const PRODUCTS = gql`
 
 const columnHelper = createColumnHelper<Product>();
 
-export const columns = [
+const columns = [
   columnHelper.display({
     id: "select",
     header: ({ table }) => (
@@ -98,7 +98,7 @@ export const columns = [
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
                 <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
+                <MoreVerticalIcon className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -107,7 +107,7 @@ export const columns = [
                 Copy product ID
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <Link to="/products/:id" params={{ id: product.id }}>
+              <Link to="/products/:productId" params={{ productId: product.id }}>
                 <DropdownMenuItem>
                   <PencilIcon className="mr-2 h-4 w-4" />
                   Edit

@@ -1,49 +1,45 @@
 import * as z from "zod";
-import { storeSchema } from "./store";
+import {
+  Store,
+  relatedStoreModel,
+  ProductImage,
+  relatedProductImageModel,
+  ProductVariant,
+  relatedProductVariantModel,
+  Collection,
+  relatedCollectionModel,
+} from "@/types";
 
 export enum ProductStatus {
-  PUBLISHED = "Published",
   DRAFT = "Draft",
+  PUBLISHED = "Published",
 }
-export const productStatusSchema = z.nativeEnum(ProductStatus);
 
-export const productImageSchema = z.object({
-  id: z.string(),
-  src: z.string().url(),
-  alt: z.string().optional(),
-});
-export type ProductImage = z.infer<typeof productImageSchema>;
-
-export const productVariantSchema = z.object({
-  id: z.string(),
-  name: z.string().trim().min(3, "Variant name must be at least 3 characters long").max(255),
-  stock: z.number().min(0, "Stock cannot be negative"),
-  price: z.number().min(0, "Price cannot be negative"),
-});
-export type ProductVariant = z.infer<typeof productVariantSchema>;
-
-export const productOptionValueSchema = z.object({
-  id: z.string(),
-  value: z.string().trim().min(3, "Option value must be at least 3 characters long").max(255),
-});
-export type ProductOptionValue = z.infer<typeof productOptionValueSchema>;
-
-export const productOptionSchema = z.object({
-  id: z.string(),
-  name: z.string().trim().min(3, "Option name must be at least 3 characters long").max(255),
-  values: z.array(productOptionValueSchema).min(2, "Option must have at least two values")
-});
-export type ProductOption = z.infer<typeof productOptionSchema>;
-
-export const productSchema = z.object({
-  id: z.string(),
-  name: z.string().trim().min(3, "Product name must be at least 3 characters long").max(255),
+export const productModel = z.object({
+  id: z.string().uuid(),
+  name: z.string().trim().min(1).max(255),
   description: z.string().optional(),
-  status: productStatusSchema,
   avgPrice: z.number().optional(),
-  images: z.array(productImageSchema).default([]),
-  options: z.array(productOptionSchema).default([]),
-  variants: z.array(productVariantSchema).default([]),
-  store: storeSchema.optional(),
+  status: z.nativeEnum(ProductStatus),
 });
-export type Product = z.infer<typeof productSchema>;
+
+export interface Product extends z.infer<typeof productModel> {
+  store?: Store;
+  images: ProductImage[];
+  variants: ProductVariant[];
+  collections: Collection[];
+}
+
+/**
+ * relatedProductModel contains all relations on your model in addition to the scalars
+ *
+ * NOTE: Lazy required in case of potential circular dependencies within schema
+ */
+export const relatedProductModel: z.ZodSchema<Product> = z.lazy(() =>
+  productModel.extend({
+    store: relatedStoreModel.optional(),
+    images: z.array(relatedProductImageModel).default([]),
+    variants: z.array(relatedProductVariantModel).default([]),
+    collections: z.array(relatedCollectionModel).default([]),
+  }),
+);

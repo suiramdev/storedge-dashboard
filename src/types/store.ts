@@ -1,12 +1,30 @@
 import * as z from "zod";
+import { Collection, relatedCollectionModel, Product, relatedProductModel } from "@/types";
 
-export const storeCurrencyCodeSchema = z.enum([ "EUR" ]).default("EUR");
-export type StoreCurrencyCode = z.infer<typeof storeCurrencyCodeSchema>;
+export enum CurrencyCode {
+  EUR = "EUR",
+}
 
-export const storeSchema = z.object({
-  id: z.string().optional(),
-  name: z.string().trim().min(3, "Store name cannot be empty").max(255),
+export const storeModel = z.object({
+  id: z.string().uuid(),
+  name: z.string().trim().min(1).max(255),
   description: z.string().optional(),
-  currencyCode: storeCurrencyCodeSchema,
+  currencyCode: z.nativeEnum(CurrencyCode),
 });
-export type Store = z.infer<typeof storeSchema>;
+
+export interface Store extends z.infer<typeof storeModel> {
+  collections: Collection[];
+  products: Product[];
+}
+
+/**
+ * relatedStoreModel contains all relations on your model in addition to the scalars
+ *
+ * NOTE: Lazy required in case of potential circular dependencies within schema
+ */
+export const relatedStoreModel: z.ZodSchema<Store> = z.lazy(() =>
+  storeModel.extend({
+    collections: z.array(relatedCollectionModel).default([]),
+    products: z.array(relatedProductModel).default([]),
+  }),
+);
