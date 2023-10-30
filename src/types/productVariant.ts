@@ -1,5 +1,4 @@
 import * as z from "zod";
-import { Decimal } from "decimal.js";
 import { Product, relatedProductModel } from "@/types";
 
 export const productVariantModel = z.object({
