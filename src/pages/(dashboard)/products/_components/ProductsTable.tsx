@@ -30,6 +30,7 @@ const PRODUCTS = gql`
       }
       name
       avgPrice
+      stock
       store {
         currencyCode
       }
@@ -78,6 +79,9 @@ const columns = [
           : "-"}
       </span>
     ),
+  }),
+  columnHelper.accessor("stock", {
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Stock" />,
   }),
   columnHelper.accessor("status", {
     header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,

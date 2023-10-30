@@ -6,6 +6,7 @@ import { ProductStatus } from "@/types";
 import DeleteProductDialog from "@/components/dialogs/DeleteProductDialog";
 import { Button } from "@/components/ui/button";
 import { TrashIcon } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 interface ProductStatusCardProps {
   id: string;
@@ -34,6 +35,19 @@ function ProductStatusCard({ id }: ProductStatusCardProps) {
                 <SelectItem value={ProductStatus.PUBLISHED}>{ProductStatus.PUBLISHED}</SelectItem>
               </SelectContent>
             </Select>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name="stock"
+        render={({ field }) => (
+          <FormItem className="space-y-1">
+            <FormLabel>Stock</FormLabel>
+            <FormControl>
+              <Input placeholder="Amount" min="0" step="1" {...field} />
+            </FormControl>
             <FormMessage />
           </FormItem>
         )}

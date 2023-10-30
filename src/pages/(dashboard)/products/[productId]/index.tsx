@@ -20,6 +20,7 @@ const PRODUCT = gql`
       name
       description
       price
+      stock
       status
       variants {
         id
@@ -38,6 +39,7 @@ const UPDATE_PRODUCT = gql`
       name
       description
       price
+      stock
       status
       variants {
         id
@@ -103,6 +105,7 @@ function ProductPage() {
             description: { set: data.description },
             // NOTE: A Decimal from decimal.js is expected by the request, so we convert it to a string.
             price: { set: data.price.toString() },
+            stock: { set: data.stock },
             status: { set: data.status },
             variants: {
               deleteMany: {
