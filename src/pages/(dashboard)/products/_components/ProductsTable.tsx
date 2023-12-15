@@ -24,8 +24,10 @@ const PRODUCTS = gql`
   query Products($where: ProductWhereInput) {
     products(where: $where) {
       id
-      images(take: 1) {
-        src
+      images(orderBy: [{ position: desc }], take: 1) {
+        file {
+          url
+        }
         alt
       }
       name
@@ -63,7 +65,7 @@ const columns = [
     id: "image",
     header: undefined,
     cell: ({ getValue }) =>
-      getValue() && <img src={getValue()!.src} alt={getValue()!.alt} className="h-8 w-8 rounded-full" />,
+      getValue() && <img src={getValue()!.file.url} alt={getValue()!.alt} className="h-8 w-8 rounded-sm" />,
   }),
   columnHelper.accessor("name", {
     header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
@@ -153,7 +155,10 @@ function ProductsTable() {
       viewable
       rowsActions={(selectedRows) => (
         <DeleteProductsDialog ids={selectedRows.map((row) => row.original.id)}>
-          <Button variant="ghost" className="hover:!bg-destructive hover:!text-destructive-foreground" size="sm">
+          <Button
+            variant="outline"
+            className="hover:border-destructive hover:!bg-destructive hover:!text-destructive-foreground"
+          >
             <TrashIcon className="mr-2 h-4 w-4" />
             Delete selected products
           </Button>

@@ -11,7 +11,7 @@ export const productVariantModel = z.object({
 });
 
 export interface ProductVariant extends z.infer<typeof productVariantModel> {
-  product?: Product;
+  product: Product;
 }
 
 /**
@@ -21,6 +21,6 @@ export interface ProductVariant extends z.infer<typeof productVariantModel> {
  */
 export const relatedProductVariantModel: z.ZodSchema<ProductVariant> = z.lazy(() =>
   productVariantModel.extend({
-    product: relatedProductModel.optional(),
+    product: relatedProductModel,
   }),
 );

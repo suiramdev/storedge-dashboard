@@ -11,6 +11,7 @@ import { ArrowLeftIcon } from "lucide-react";
 import { ProductStatus } from "@/types";
 import ProductDetailsCard from "./_components/ProductDetailsCard";
 import ProductStatusCard from "./_components/ProductStatusCard";
+import ProductImagesCard from "./_components/ProductImagesCard";
 import ProductVariantsCard from "./_components/ProductVariantsCard";
 
 const PRODUCT = gql`
@@ -152,7 +153,8 @@ function ProductPage() {
             </Button>
           </div>
           <ProductDetailsCard />
-          <ProductStatusCard id={productId} />
+          <ProductStatusCard />
+          <ProductImagesCard />
           <ProductVariantsCard onVariantRemoved={(variant) => setRemovedVariants([variant.id, ...removedVariants])} />
         </div>
       </form>

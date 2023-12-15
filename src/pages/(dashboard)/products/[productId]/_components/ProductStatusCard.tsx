@@ -8,11 +8,7 @@ import { Button } from "@/components/ui/button";
 import { TrashIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
-interface ProductStatusCardProps {
-  id: string;
-}
-
-function ProductStatusCard({ id }: ProductStatusCardProps) {
+function ProductStatusCard() {
   const form = useFormContext();
   const navigate = useNavigate();
 
@@ -44,7 +40,7 @@ function ProductStatusCard({ id }: ProductStatusCardProps) {
         name="stock"
         render={({ field }) => (
           <FormItem className="space-y-1">
-            <FormLabel>Stock</FormLabel>
+            <FormLabel>Stock amount</FormLabel>
             <FormControl>
               <Input placeholder="Amount" min="0" step="1" {...field} />
             </FormControl>
@@ -52,7 +48,7 @@ function ProductStatusCard({ id }: ProductStatusCardProps) {
           </FormItem>
         )}
       />
-      <DeleteProductDialog id={id} onCompleted={() => navigate("/products")}>
+      <DeleteProductDialog id={form.watch("id")} onCompleted={() => navigate("/products")}>
         <Button type="button" variant="destructive" className="w-full">
           <TrashIcon className="mr-2 h-4 w-4" />
           Delete

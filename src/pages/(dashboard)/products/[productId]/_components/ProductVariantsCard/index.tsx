@@ -19,7 +19,7 @@ function ProductVariantsCard({ onVariantRemoved }: ProductVariantsCardProps) {
         <span className="text-sm font-semibold">Variants</span>
         <Button
           type="button"
-          variant="ghost"
+          variant="outline"
           size="sm"
           onClick={() =>
             variants.append({

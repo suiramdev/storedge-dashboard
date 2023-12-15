@@ -28,7 +28,7 @@ export const productModel = z.object({
 });
 
 export interface Product extends z.infer<typeof productModel> {
-  store?: Store;
+  store: Store;
   images: ProductImage[];
   variants: ProductVariant[];
   collections: Collection[];
@@ -41,7 +41,7 @@ export interface Product extends z.infer<typeof productModel> {
  */
 export const relatedProductModel: z.ZodSchema<Product> = z.lazy(() =>
   productModel.extend({
-    store: relatedStoreModel.optional(),
+    store: relatedStoreModel,
     images: z.array(relatedProductImageModel).default([]),
     variants: z.array(relatedProductVariantModel).default([]),
     collections: z.array(relatedCollectionModel).default([]),
