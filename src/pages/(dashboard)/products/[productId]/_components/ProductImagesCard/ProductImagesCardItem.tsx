@@ -1,13 +1,15 @@
+import { Button } from "@/components/ui/button";
 import { ProductImage } from "@/types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { GripVerticalIcon } from "lucide-react";
 
 interface ProductImagesCardItem {
   image: ProductImage;
 }
 
 function ProductImagesCardItem({ image }: ProductImagesCardItem) {
-  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
+  const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition } = useSortable({
     id: image.id,
   });
 
@@ -19,13 +21,23 @@ function ProductImagesCardItem({ image }: ProductImagesCardItem) {
   return (
     <div
       ref={setNodeRef}
-      className="group relative origin-top-left overflow-hidden rounded-lg border bg-background first:col-span-2 first:row-span-2 hover:cursor-grab active:first:origin-center hover:active:z-10 hover:active:cursor-grabbing"
+      className="group relative overflow-hidden rounded-lg border bg-background first:col-span-2 first:row-span-2 hover:active:z-10"
       style={style}
-      {...attributes}
-      {...listeners}
     >
       <img className="h-full w-full object-contain object-center" src={image.file.url} alt={image.alt} />
-      <div className="invisible absolute left-0 top-0 h-full w-full bg-secondary/50 group-hover:visible"></div>
+      <div className="invisible absolute left-0 top-0 flex h-full w-full items-center justify-center bg-secondary/50 group-hover:visible">
+        <Button
+          ref={setActivatorNodeRef}
+          variant="ghost"
+          size="icon"
+          className="absolute right-2 top-2 h-8 w-8 hover:cursor-grab hover:active:cursor-grabbing"
+          type="button"
+          {...attributes}
+          {...listeners}
+        >
+          <GripVerticalIcon className="h-4 w-4" />
+        </Button>
+      </div>
     </div>
   );
 }

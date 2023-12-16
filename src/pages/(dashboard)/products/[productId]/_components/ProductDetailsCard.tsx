@@ -36,7 +36,7 @@ function ProductDetailsCard() {
       />
       <FormField
         control={form.control}
-        name="price"
+        name="Price"
         render={({ field }) => (
           <FormItem className="space-y-1">
             <FormLabel>Price</FormLabel>

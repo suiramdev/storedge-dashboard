@@ -2,8 +2,9 @@ import { gql } from "@apollo/client";
 import { useSession } from "@/providers/session";
 import { useDropzone } from "react-dropzone";
 import clsx from "clsx";
-import { ImagePlusIcon } from "lucide-react";
+import { ImagePlusIcon, Loader2Icon } from "lucide-react";
 import { apolloClient } from "@/lib/apollo";
+import { useState } from "react";
 
 const STAGE_PRODUCT_IMAGE = gql`
   mutation StageProductImage($storeId: String!, $mimeType: String!) {
@@ -22,7 +23,7 @@ const CREATE_PRODUCT_IMAGE = gql`
     $bucket: String!
     $key: String!
     $contentType: String!
-    $position: Int!
+    $orderIndex: Int!
   ) {
     createOneProductImage(
       data: {
@@ -33,7 +34,7 @@ const CREATE_PRODUCT_IMAGE = gql`
             create: { bucket: $bucket, key: $key, contentType: $contentType }
           }
         }
-        position: $position
+        orderIndex: $orderIndex
       }
     ) {
       id
@@ -43,12 +44,13 @@ const CREATE_PRODUCT_IMAGE = gql`
 
 interface ProductImageDropZoneProps {
   id: string;
-  position?: number;
+  orderIndex?: number;
 }
 
 // TODO: Loading state during uploading
-function ProductImageDropZone({ id, position }: ProductImageDropZoneProps) {
+function ProductImageDropZone({ id, orderIndex }: ProductImageDropZoneProps) {
   const selectedStoreId = useSession((state) => state.selectedStoreId);
+  const [loading, setLoading] = useState(false);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: async (files) => {
       if (!files[0]) return;
@@ -62,6 +64,7 @@ function ProductImageDropZone({ id, position }: ProductImageDropZoneProps) {
       });
       if (errors) return;
 
+      setLoading(true);
       const result = await fetch(data.stageOneFile.uploadUrl, {
         method: "PUT",
         body: files[0],
@@ -70,6 +73,7 @@ function ProductImageDropZone({ id, position }: ProductImageDropZoneProps) {
           "Content-Type": data.stageOneFile.contentType,
         },
       });
+      setLoading(false);
       if (!result.ok) return;
 
       await apolloClient.mutate({
@@ -79,14 +83,19 @@ function ProductImageDropZone({ id, position }: ProductImageDropZoneProps) {
           bucket: data.stageOneFile.bucket,
           key: data.stageOneFile.key,
           contentType: data.stageOneFile.contentType,
-          position: position || 0,
+          orderIndex: orderIndex || 0,
         },
         refetchQueries: ["ProductImages"],
       });
     },
   });
 
-  return (
+  return loading ? (
+    <div className="flex flex-col items-center justify-center space-y-2 rounded-md border py-6">
+      <Loader2Icon className="h-4 w-4 animate-spin text-primary" />
+      <span className="text-primary">Uploading...</span>
+    </div>
+  ) : (
     <button
       className={clsx(
         "group flex w-full flex-col items-center justify-center space-y-2 rounded-md border py-6",

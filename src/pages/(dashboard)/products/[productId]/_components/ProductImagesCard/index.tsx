@@ -1,6 +1,6 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { useFormContext } from "react-hook-form";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ProductImage } from "@/types";
 import {
   DragEndEvent,
@@ -11,83 +11,88 @@ import {
   MouseSensor,
   TouchSensor,
 } from "@dnd-kit/core";
-import { arraySwap, SortableContext, rectSwappingStrategy } from "@dnd-kit/sortable";
+import { arrayMove, SortableContext, rectSortingStrategy } from "@dnd-kit/sortable";
 import ProductImagesCardItem from "./ProductImagesCardItem";
 import ProductImageDropZone from "./ProductImageDropZone";
-// import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 
 const PRODUCT_IMAGES = gql`
   query ProductImages($productId: String!) {
-    productImages(where: { productId: { equals: $productId } }, orderBy: [{ position: desc }]) {
+    productImages(where: { productId: { equals: $productId } }, orderBy: [{ orderIndex: asc }]) {
       id
       file {
         url
       }
-      position
     }
   }
 `;
 
-// const SWAP_IMAGES = gql`
-//   mutation SwapImages($id: String!, $position: Int!, $otherId: String!, $otherPosition: Int!) {
-//     updateOneProductImage(data: { position: $otherPosition }, where: { id: $id }) {
-//       id
-//     }
-//     updateOneProductImage(data: { position: $position }, where: { id: $otherId }) {
-//       id
-//     }
-//   }
-// `;
+const UPDATE_PRODUCT_IMAGES_ORDER = gql`
+  mutation UpdateProductImagesOrder($data: [ProductImageUpdateOrderInput!]!) {
+    updateProductImagesOrder(data: $data) {
+      count
+    }
+  }
+`;
 
 function ProductImagesCard() {
   const form = useFormContext();
-  const [images, setImages] = useState<ProductImage[]>([]);
+
+  const [items, setItems] = useState<ProductImage[]>([]);
 
   const { data } = useQuery(PRODUCT_IMAGES, {
     variables: {
       productId: form.watch("id"),
     },
-    onCompleted: (data) => {
-      setImages(data.productImages);
-    },
   });
+
+  useEffect(() => {
+    if (data?.productImages) {
+      setItems(data.productImages);
+    }
+  }, [data]);
 
   const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
 
-  // const { toast } = useToast();
+  const { toast } = useToast();
 
-  // const [swapImages] = useMutation(SWAP_IMAGES, {
-  //   onCompleted: () =>
-  //     toast({
-  //       title: "Image position updated",
-  //       description: "The image position has been updated.",
-  //     }),
-  // });
+  const [updateProductImagesOrder] = useMutation(UPDATE_PRODUCT_IMAGES_ORDER, {
+    onCompleted: () => {
+      toast({
+        title: "Saved images order",
+      });
+    },
+    refetchQueries: ["ProductImages"],
+  });
 
   const handleDragEnd = (event: DragEndEvent) => {
     if (!event.over) return;
 
-    setImages((images) => {
-      const oldIndex = images.findIndex((image) => image.id === event.active.id);
-      const newIndex = images.findIndex((image) => image.id === event.over?.id);
+    const oldIndex = data.productImages.findIndex((image: ProductImage) => image.id === event.active.id);
+    const newIndex = data.productImages.findIndex((image: ProductImage) => image.id === event.over!.id);
+    if (oldIndex === newIndex) return;
 
-      return arraySwap(images, oldIndex, newIndex);
+    updateProductImagesOrder({
+      variables: {
+        data: arrayMove(items, oldIndex, newIndex).map((image, index: number) => ({
+          id: (image as ProductImage).id,
+          orderIndex: index,
+        })),
+      },
     });
   };
 
   return (
     <div className="col-span-3 space-y-4 rounded-lg border bg-background px-4 py-6">
       <span className="text-sm font-semibold">Images</span>
-      {images.length > 0 ? (
+      {items.length > 0 ? (
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-          <SortableContext items={data.productImages} strategy={rectSwappingStrategy}>
+          <SortableContext items={items} strategy={rectSortingStrategy}>
             <div className="grid grid-cols-4 grid-rows-2 gap-4">
-              {images.map((image) => (
-                <ProductImagesCardItem image={image} />
+              {items.map((item) => (
+                <ProductImagesCardItem image={item} />
               ))}
-              {data.productImages.length < 5 && (
-                <ProductImageDropZone id={form.watch("id")} position={data.productImages.length + 1} />
-              )}
+              {items.length < 5 && <ProductImageDropZone id={form.watch("id")} orderIndex={items.length} />}
             </div>
           </SortableContext>
         </DndContext>

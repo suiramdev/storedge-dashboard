@@ -24,7 +24,7 @@ const PRODUCTS = gql`
   query Products($where: ProductWhereInput) {
     products(where: $where) {
       id
-      images(orderBy: [{ position: desc }], take: 1) {
+      images(orderBy: [{ orderIndex: asc }], take: 1) {
         file {
           url
         }
@@ -65,7 +65,9 @@ const columns = [
     id: "image",
     header: undefined,
     cell: ({ getValue }) =>
-      getValue() && <img src={getValue()!.file.url} alt={getValue()!.alt} className="h-8 w-8 rounded-sm" />,
+      getValue() && (
+        <img src={getValue()!.file.url} alt={getValue()!.alt} className="h-8 w-8 rounded-sm object-cover" />
+      ),
   }),
   columnHelper.accessor("name", {
     header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
