@@ -99,7 +99,7 @@ function ProductImagesCard() {
       {checkedItems.length > 0 ? (
         <div className="flex justify-between">
           <span className="text-sm font-semibold">{checkedItems.length} images selected</span>
-          <DeleteProductImagesDialog ids={checkedItems}>
+          <DeleteProductImagesDialog ids={checkedItems} onCompleted={() => setCheckedItems([])}>
             <Button type="button" variant="destructive" size="sm">
               <TrashIcon className="mr-2 h-4 w-4" /> Delete selected
             </Button>
