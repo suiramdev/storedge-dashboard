@@ -4,6 +4,7 @@ import { Product, File, relatedProductModel, relatedFileModel } from "@/types";
 export const productImageModel = z.object({
   id: z.string().uuid(),
   alt: z.string().optional(),
+  position: z.number().int().min(0),
 });
 
 export interface ProductImage extends z.infer<typeof productImageModel> {
