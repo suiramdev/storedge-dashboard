@@ -19,7 +19,7 @@ function ProductImagesCardItem({ image }: ProductImagesCardItem) {
   return (
     <div
       ref={setNodeRef}
-      className="group relative overflow-hidden rounded-lg border bg-background first:col-span-2 first:row-span-2 hover:cursor-grab hover:active:z-10 hover:active:cursor-grabbing"
+      className="group relative origin-top-left overflow-hidden rounded-lg border bg-background first:col-span-2 first:row-span-2 hover:cursor-grab active:first:origin-center hover:active:z-10 hover:active:cursor-grabbing"
       style={style}
       {...attributes}
       {...listeners}
