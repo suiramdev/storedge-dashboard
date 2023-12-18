@@ -13,7 +13,7 @@ function ProductStatusCard() {
   const navigate = useNavigate();
 
   return (
-    <div className="col-span-2 h-fit space-y-4 rounded-lg border bg-background px-4 py-6">
+    <div className="space-y-4 rounded-lg border bg-background px-4 py-6">
       <FormField
         control={form.control}
         name="status"

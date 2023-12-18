@@ -7,7 +7,7 @@ function ProductDetailsCard() {
   const form = useFormContext();
 
   return (
-    <div className="col-span-3 space-y-4 rounded-lg border bg-background px-4 py-6">
+    <div className="space-y-4 rounded-lg border bg-background px-4 py-6">
       <FormField
         control={form.control}
         name="name"

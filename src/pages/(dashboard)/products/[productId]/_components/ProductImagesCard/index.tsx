@@ -95,7 +95,7 @@ function ProductImagesCard() {
   };
 
   return (
-    <div className="col-span-3 space-y-4 rounded-lg border bg-background px-4 py-6">
+    <div className="space-y-4 rounded-lg border bg-background px-4 py-6">
       {checkedItems.length > 0 ? (
         <div className="flex justify-between">
           <span className="text-sm font-semibold">{checkedItems.length} images selected</span>

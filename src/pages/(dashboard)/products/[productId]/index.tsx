@@ -11,6 +11,7 @@ import { ArrowLeftIcon } from "lucide-react";
 import { ProductStatus } from "@/types";
 import ProductDetailsCard from "./_components/ProductDetailsCard";
 import ProductStatusCard from "./_components/ProductStatusCard";
+import ProductRankingCard from "./_components/ProductRankingCard";
 import ProductImagesCard from "./_components/ProductImagesCard";
 import ProductVariantsCard from "./_components/ProductVariantsCard";
 
@@ -140,22 +141,26 @@ function ProductPage() {
   return (
     <Form {...form}>
       <form onSubmit={handleSubmit}>
-        <div className="grid grid-cols-5 gap-4">
-          <div className="col-span-full flex justify-between">
-            <Button variant="ghost" asChild>
-              <Link to="/products">
-                <ArrowLeftIcon className="mr-2 h-4 w-4" />
-                Back to products
-              </Link>
-            </Button>
-            <Button disabled={!form.formState.isDirty} type="submit">
-              Save changes
-            </Button>
+        <div className="mb-4 flex justify-between">
+          <Button variant="ghost" asChild>
+            <Link to="/products">
+              <ArrowLeftIcon className="mr-2 h-4 w-4" />
+              Back to products
+            </Link>
+          </Button>
+          <Button disabled={!form.formState.isDirty} type="submit">
+            Save changes
+          </Button>
+        </div>
+        <div className="grid gap-4 md:grid-cols-[1.5fr_1fr]">
+          <div className="space-y-4">
+            <ProductDetailsCard />
+            <ProductImagesCard />
+            <ProductVariantsCard onVariantRemoved={(variant) => setRemovedVariants([variant.id, ...removedVariants])} />
           </div>
-          <ProductDetailsCard />
-          <ProductStatusCard />
-          <ProductImagesCard />
-          <ProductVariantsCard onVariantRemoved={(variant) => setRemovedVariants([variant.id, ...removedVariants])} />
+          <div className="space-y-4">
+            <ProductStatusCard />
+          </div>
         </div>
       </form>
     </Form>

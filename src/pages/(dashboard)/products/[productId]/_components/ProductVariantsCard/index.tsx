@@ -14,7 +14,7 @@ function ProductVariantsCard({ onVariantRemoved }: ProductVariantsCardProps) {
   const variants = useFieldArray({ control: form.control, name: "variants" });
 
   return (
-    <div className="col-span-3 rounded-lg border bg-background px-4 py-6">
+    <div className="rounded-lg border bg-background px-4 py-6">
       <div className="flex justify-between">
         <span className="text-sm font-semibold">Variants</span>
         <Button
