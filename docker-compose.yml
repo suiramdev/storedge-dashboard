@@ -1,0 +1,8 @@
+version: "3.9"
+
+services:
+  storedge-dashboard:
+    container_name: storedge-dashboard
+    build:
+      context: .
+    env_file: .env
