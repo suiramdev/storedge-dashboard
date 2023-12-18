@@ -1,11 +1,11 @@
 import { gql, useQuery } from "@apollo/client";
 import { useSession } from "@/providers/session";
-import { useModals } from "@/router";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PlusCircleIcon } from "lucide-react";
+import CreateStoreDialog from "@/components/dialogs/CreateStoreDialog";
 
 const STORES = gql`
   query Stores {
@@ -16,10 +16,9 @@ const STORES = gql`
   }
 `;
 
-function Login() {
+function StoreSelectionPage() {
   const selectStore = useSession((state) => state.selectStore);
   const { data } = useQuery(STORES);
-  const modals = useModals();
 
   return (
     <div className="grid min-h-screen grid-cols-2">
@@ -50,15 +49,15 @@ function Login() {
                       <Skeleton />
                     </AvatarFallback>
                   </Avatar>
-                  <span className="truncate">
-                    {store.name}
-                  </span>
+                  <span className="truncate">{store.name}</span>
                 </Button>
               ))}
-            <Button variant="outline" className="w-full justify-start" onClick={() => modals.open("/new-store")}>
-              <PlusCircleIcon className="mr-2 h-5 w-5" />
-              Create a store
-            </Button>
+            <CreateStoreDialog>
+              <Button variant="outline" className="w-full justify-start">
+                <PlusCircleIcon className="mr-2 h-5 w-5" />
+                Create a store
+              </Button>
+            </CreateStoreDialog>
           </CardContent>
         </Card>
       </div>
@@ -66,4 +65,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default StoreSelectionPage;

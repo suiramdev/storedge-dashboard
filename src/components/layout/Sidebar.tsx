@@ -85,7 +85,7 @@ const SidebarLink = ({ name, icon, variant, ...props }: SidebarLinkProps) => {
 
 function Sidebar() {
   return (
-    <aside className="flex flex-col overflow-y-scroll rounded-lg border px-4 py-6">
+    <aside className="flex flex-col overflow-y-scroll rounded-lg border px-4 py-6 space-y-6">
       <div className="flex flex-1 flex-col space-y-6">
         <div className="flex flex-col space-y-0.5">
           <h1 className="mb-2 px-4 text-sm text-muted-foreground">Management</h1>
