@@ -1,6 +1,6 @@
 # storedge-dashboard
 
-The graphical user interface for managing the Storedge CMS. This dashboard is designed to provide a seamless administrative experience for e-commerce platforms. Built with the modern Vite.js build tool and React framework, the Storedge-Dashboard integrates shadcn-ui components to create a simple yet effective user interface, refined from initial custom designs in Figma.
+The graphical user interface for managing the Storedge CMS. This dashboard is designed to provide a seamless administrative experience for e-commerce platforms. Built with the modern Vite.js build tool and React framework, dashboard integrates shadcn-ui components to create a simple yet effective user interface, refined from initial custom designs in Figma.
 
 ## Features
 
