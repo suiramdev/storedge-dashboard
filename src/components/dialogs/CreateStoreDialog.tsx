@@ -1,4 +1,5 @@
-import * as z from "zod";
+import { z } from "zod";
+import { CurrencyCode } from "@/types";
 import { gql, useMutation } from "@apollo/client";
 import { DialogProps } from "@radix-ui/react-dialog";
 import { useState } from "react";
@@ -16,7 +17,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 const formSchema = z.object({
   name: z.string().trim().min(1, "Name must be at least 3 characters").max(255, "Name must not exceed 255 characters"),
   description: z.string().optional(),
-  currency: z.string().min(1, "Please select a currency"),
+  currencyCode: z.nativeEnum(CurrencyCode),
 });
 
 const CREATE_STORE = gql`
@@ -42,7 +43,7 @@ function CreateStoreDialog({ open, onOpenChange, children, ...props }: CreatePro
     defaultValues: {
       name: "",
       description: "",
-      currency: "",
+      currencyCode: CurrencyCode.EUR,
     },
   });
 
@@ -68,7 +69,7 @@ function CreateStoreDialog({ open, onOpenChange, children, ...props }: CreatePro
         data: {
           name: data.name,
           description: data.description,
-          currencyCode: data.currency,
+          currencyCode: data.currencyCode,
         },
       },
     });
@@ -111,7 +112,7 @@ function CreateStoreDialog({ open, onOpenChange, children, ...props }: CreatePro
             />
             <FormField
               control={form.control}
-              name="currency"
+              name="currencyCode"
               render={({ field }) => (
                 <FormItem className="space-y-1">
                   <FormLabel>Currency</FormLabel>

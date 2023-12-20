@@ -21,7 +21,7 @@ interface SessionState {
   signIn: (email: string, password: string) => void;
   signOut: () => void;
   selectedStoreId: string | null;
-  selectStore: (id: string) => void;
+  selectStore: (id: string | null) => void;
 }
 
 // const SIGNED_IN = gql`
@@ -105,6 +105,11 @@ export const useSession = create<SessionState>()(
         },
         selectedStoreId: null,
         selectStore: (id) => {
+          if (!id) {
+            set({ selectedStoreId: null });
+            return;
+          }
+
           apolloClient
             .query({ query: SELECT_STORE, variables: { where: { id } } })
             .then(() => set({ selectedStoreId: id }))

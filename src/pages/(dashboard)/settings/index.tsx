@@ -1,6 +1,6 @@
 import { gql, useQuery, useMutation } from "@apollo/client";
 import { z } from "zod";
-import { storeModel, CurrencyCode } from "@/types";
+import { CurrencyCode } from "@/types";
 import { useSession } from "@/providers/session";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { Form } from "@/components/ui/form";
 import StoreDetailsCard from "./_components/StoreDetailsCard";
 import { TrashIcon } from "lucide-react";
+import DeleteStoreDialog from "@/components/dialogs/DeleteStoreDialog";
 
 const GENERAL_SETTINGS = gql`
   query GeneralSettings($storeId: String!) {
@@ -70,7 +71,7 @@ function SettingsPage() {
   const { toast } = useToast();
 
   const [updateStore] = useMutation(UPDATE_STORE, {
-    onCompleted: (data) => {
+    onCompleted: () => {
       toast({ title: "General settings saved" });
     },
     onError: (error) => {
@@ -108,10 +109,12 @@ function SettingsPage() {
         <Separator className="my-4" />
         <div className="flex flex-col gap-4">
           <StoreDetailsCard />
-          <Button type="button" variant="destructive" size="lg">
-            <TrashIcon className="mr-2 h-4 w-4" />
-            Delete store
-          </Button>
+          <DeleteStoreDialog id={selectedStoreId!}>
+            <Button type="button" variant="destructive" size="lg">
+              <TrashIcon className="mr-2 h-4 w-4" />
+              Delete store
+            </Button>
+          </DeleteStoreDialog>
         </div>
       </form>
     </Form>
