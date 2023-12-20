@@ -14,8 +14,8 @@ const navItems: NavItem[] = [
     path: "/settings",
   },
   {
-    title: "Users",
-    path: "/settings/users",
+    title: "Access control",
+    path: "/settings/access-control",
   },
 ];
 

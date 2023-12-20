@@ -3,7 +3,7 @@ import { Product, relatedProductModel } from "@/types";
 
 export const productVariantModel = z.object({
   id: z.string().uuid(),
-  name: z.string().trim().min(1, "Name must be at least 3 characters").max(255, "Name must not exceed 255 characters"),
+  name: z.string().trim().min(3, "Name must be at least 3 characters").max(255, "Name must not exceed 255 characters"),
   description: z.string().optional(),
   price: z.coerce.number().positive(),
   stock: z.coerce.number().min(0).int(),
@@ -11,7 +11,7 @@ export const productVariantModel = z.object({
 });
 
 export interface ProductVariant extends z.infer<typeof productVariantModel> {
-  product: Product;
+  product?: Product;
 }
 
 /**
@@ -21,6 +21,6 @@ export interface ProductVariant extends z.infer<typeof productVariantModel> {
  */
 export const relatedProductVariantModel: z.ZodSchema<ProductVariant> = z.lazy(() =>
   productVariantModel.extend({
-    product: relatedProductModel,
+    product: relatedProductModel.optional(),
   }),
 );

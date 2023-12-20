@@ -36,10 +36,7 @@ const SidebarCollapsible = ({ name, icon, children, ...props }: SidebarCollapsib
           </Suspense>
           {name}
           <CaretDownIcon
-            className={cn(
-              "ml-auto h-4 w-4 shrink-0 opacity-50 transition-transform",
-              isOpen && "rotate-180",
-            )}
+            className={cn("ml-auto h-4 w-4 shrink-0 opacity-50 transition-transform", isOpen && "rotate-180")}
           />
         </Button>
       </CollapsibleTrigger>
@@ -85,7 +82,7 @@ const SidebarLink = ({ name, icon, variant, ...props }: SidebarLinkProps) => {
 
 function Sidebar() {
   return (
-    <aside className="flex flex-col overflow-y-scroll rounded-lg border px-4 py-6 space-y-6">
+    <aside className="flex flex-col space-y-6 overflow-y-scroll rounded-lg border px-4 py-6">
       <div className="flex flex-1 flex-col space-y-6">
         <div className="flex flex-col space-y-0.5">
           <h1 className="mb-2 px-4 text-sm text-muted-foreground">Management</h1>
@@ -97,7 +94,6 @@ function Sidebar() {
             <SidebarLink to="/orders" name="All orders" />
           </SidebarCollapsible>
           <SidebarLink to="/customers" name="Customers" icon={UsersIcon} />
-          <SidebarLink to="/settings" name="Settings" icon={SettingsIcon} />
         </div>
         <div className="flex flex-col space-y-0.5">
           <h1 className="mb-2 px-4 text-sm text-muted-foreground">Marketing</h1>
@@ -107,7 +103,8 @@ function Sidebar() {
         </div>
       </div>
       <div className="flex flex-col space-y-0.5">
-        <h1 className="mb-2 px-4 text-sm text-muted-foreground">Get the Info</h1>
+        <h1 className="my-2 px-4 text-sm text-muted-foreground">General</h1>
+        <SidebarLink to="/settings" name="Settings" icon={SettingsIcon} />
         <SidebarLink to="/support" name="Support" icon={LifeBuoyIcon} />
       </div>
     </aside>

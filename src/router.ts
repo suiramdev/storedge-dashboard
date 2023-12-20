@@ -10,7 +10,7 @@ export type Path =
   | `/products/:productId`
   | `/products/:productId/:variantId`
   | `/settings`
-  | `/settings/users`;
+  | `/settings/access-control`;
 
 export type Params = {
   "/products/:productId": { productId: string };
