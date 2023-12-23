@@ -17,10 +17,16 @@ const CREATE_USER = gql`
   }
 `;
 
-const formSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8, "Password must be at least 8 characters long"),
-});
+const formSchema = z
+  .object({
+    email: z.string().email(),
+    password: z.string().min(8, "Password must be at least 8 characters long"),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
 
 interface CreateUserFormProps {
   onSubmit?: () => void;
@@ -33,6 +39,7 @@ export function CreateUserForm({ onSubmit, className }: CreateUserFormProps) {
     defaultValues: {
       email: "",
       password: "",
+      confirmPassword: "",
     },
   });
 
@@ -77,6 +84,19 @@ export function CreateUserForm({ onSubmit, className }: CreateUserFormProps) {
           render={({ field }) => (
             <FormItem className="space-y-2">
               <FormLabel>Password</FormLabel>
+              <FormControl>
+                <Input type="password" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="confirmPassword"
+          render={({ field }) => (
+            <FormItem className="space-y-2">
+              <FormLabel>Confirm password</FormLabel>
               <FormControl>
                 <Input type="password" {...field} />
               </FormControl>
