@@ -1,4 +1,4 @@
-import { gql, useMutation } from "@apollo/client";
+import { gql, useQuery, useMutation } from "@apollo/client";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -6,7 +6,18 @@ import { toast } from "sonner";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Role } from "@/types";
 import { Button } from "@/components/ui/button";
+
+const ROLES = gql`
+  query Roles {
+    roles {
+      id
+      name
+    }
+  }
+`;
 
 const CREATE_USER = gql`
   mutation CreateUser($data: UserCreateInput!) {
@@ -22,10 +33,15 @@ const formSchema = z
     email: z.string().email(),
     password: z.string().min(8, "Password must be at least 8 characters long"),
     confirmPassword: z.string(),
+    role: z.string().optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
     path: ["confirmPassword"],
+  })
+  .refine((data) => data.role !== undefined, {
+    message: "Required",
+    path: ["role"],
   });
 
 interface CreateUserFormProps {
@@ -40,8 +56,11 @@ export function CreateUserForm({ onSubmit, className }: CreateUserFormProps) {
       email: "",
       password: "",
       confirmPassword: "",
+      role: undefined,
     },
   });
+
+  const { data } = useQuery(ROLES);
 
   const [createUser] = useMutation(CREATE_USER, {
     onCompleted: () => toast.success("User created"),
@@ -55,6 +74,11 @@ export function CreateUserForm({ onSubmit, className }: CreateUserFormProps) {
         data: {
           email: values.email,
           password: values.password,
+          role: {
+            connect: {
+              id: values.role,
+            },
+          },
         },
       },
     });
@@ -65,6 +89,30 @@ export function CreateUserForm({ onSubmit, className }: CreateUserFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={handleSubmit} className={cn("flex flex-col space-y-4", className)}>
+        <FormField
+          control={form.control}
+          name="role"
+          render={({ field }) => (
+            <FormItem className="space-y-2">
+              <FormLabel>Role</FormLabel>
+              <Select onValueChange={field.onChange} value={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a role" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {data?.roles.map((role: Role) => (
+                    <SelectItem key={role.id} value={role.id}>
+                      {role.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="email"
