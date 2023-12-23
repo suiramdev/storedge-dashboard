@@ -1,6 +1,6 @@
 import { gql, useMutation } from "@apollo/client";
 import { useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import {
   AlertDialog,
   AlertDialogTrigger,
@@ -37,19 +37,16 @@ interface DeleteProductsDialogProps {
 
 export function DeleteProductsDialog({ ids, open, onOpenChange, onCompleted, children }: DeleteProductsDialogProps) {
   const [defaultOpen, setDefaultOpen] = useState(false);
-  const { toast } = useToast();
 
   const [deleteProducts] = useMutation(DELETE_PRODUCTS, {
     variables: { ids },
-    refetchQueries: ["Products"],
     onCompleted: () => {
-      toast({ title: "Products deleted" });
+      toast.success("Products deleted");
       onOpenChange ? onOpenChange(false) : setDefaultOpen(false);
       onCompleted && onCompleted();
     },
-    onError: (error) => {
-      toast({ title: "Couldn't delete", description: error.message, variant: "destructive" });
-    },
+    onError: (error) => toast.error(error.message),
+    refetchQueries: ["Products"],
   });
 
   return (

@@ -24,6 +24,10 @@ export function CreateStoreDialog({ open, onOpenChange, children }: CreateStoreD
 
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
+  const handleSubmit = () => {
+    onOpenChange ? onOpenChange(false) : setDefaultOpen(false);
+  };
+
   if (isDesktop) {
     return (
       <Dialog open={open ?? defaultOpen} onOpenChange={onOpenChange ?? setDefaultOpen}>
@@ -32,7 +36,7 @@ export function CreateStoreDialog({ open, onOpenChange, children }: CreateStoreD
           <DialogHeader>
             <DialogTitle>Create a store</DialogTitle>
           </DialogHeader>
-          <CreateStoreForm />
+          <CreateStoreForm onSubmit={handleSubmit} />
         </DialogContent>
       </Dialog>
     );
@@ -45,7 +49,7 @@ export function CreateStoreDialog({ open, onOpenChange, children }: CreateStoreD
         <DrawerHeader>
           <DrawerTitle>Create a store</DrawerTitle>
         </DrawerHeader>
-        <CreateStoreForm className="px-4" />
+        <CreateStoreForm className="px-4" onSubmit={handleSubmit} />
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
             <Button variant="outline">Cancel</Button>

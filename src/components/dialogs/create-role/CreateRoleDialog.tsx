@@ -24,6 +24,10 @@ export function CreateRoleDialog({ open, onOpenChange, children }: CreateRoleDia
 
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
+  const handleSubmit = () => {
+    onOpenChange ? onOpenChange(false) : setDefaultOpen(false);
+  };
+
   if (isDesktop) {
     return (
       <Dialog open={open ?? defaultOpen} onOpenChange={onOpenChange ?? setDefaultOpen}>
@@ -32,7 +36,7 @@ export function CreateRoleDialog({ open, onOpenChange, children }: CreateRoleDia
           <DialogHeader>
             <DialogTitle>Create a role</DialogTitle>
           </DialogHeader>
-          <CreateRoleForm />
+          <CreateRoleForm onSubmit={handleSubmit} />
         </DialogContent>
       </Dialog>
     );
@@ -45,7 +49,7 @@ export function CreateRoleDialog({ open, onOpenChange, children }: CreateRoleDia
         <DrawerHeader>
           <DrawerTitle>Create a role</DrawerTitle>
         </DrawerHeader>
-        <CreateRoleForm className="px-4" />
+        <CreateRoleForm className="px-4" onSubmit={handleSubmit} />
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
             <Button variant="outline">Cancel</Button>

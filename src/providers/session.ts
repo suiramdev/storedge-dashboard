@@ -2,7 +2,7 @@ import { gql, FetchResult } from "@apollo/client";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import { apolloClient } from "@/lib/apollo";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 
 export enum SessionStatus {
   UNAUTHENTICATED,
@@ -75,10 +75,7 @@ export const useSession = create<SessionState>()(
                 status: SessionStatus.AUTHENTICATED,
               });
 
-              toast({
-                title: "Signed in",
-                description: "You are now signed in.",
-              });
+              toast.success("Signed in");
             })
             .catch((error) => {
               set({
@@ -86,10 +83,8 @@ export const useSession = create<SessionState>()(
                 status: SessionStatus.UNAUTHENTICATED,
               });
 
-              toast({
-                title: "Could not sign in",
+              toast.error("Could not sign in", {
                 description: error.message,
-                variant: "destructive",
               });
             });
         },

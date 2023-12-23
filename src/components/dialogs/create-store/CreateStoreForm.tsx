@@ -1,13 +1,24 @@
+import { gql, useMutation } from "@apollo/client";
 import { z } from "zod";
 import { CurrencyCode } from "@/types";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+
+const CREATE_STORE = gql`
+  mutation CreateStore($data: StoreCreateInput!) {
+    createOneStore(data: $data) {
+      id
+      name
+    }
+  }
+`;
 
 const formSchema = z.object({
   name: z.string().trim().min(1, "Name must be at least 3 characters").max(255, "Name must not exceed 255 characters"),
@@ -16,10 +27,11 @@ const formSchema = z.object({
 });
 
 interface CreateStoreFormProps {
+  onSubmit?: () => void;
   className?: string;
 }
 
-export function CreateStoreForm({ className }: CreateStoreFormProps) {
+export function CreateStoreForm({ onSubmit, className }: CreateStoreFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -29,8 +41,24 @@ export function CreateStoreForm({ className }: CreateStoreFormProps) {
     },
   });
 
+  const [createStore] = useMutation(CREATE_STORE, {
+    onCompleted: () => toast.success("Store created"),
+    onError: (error) => toast.error(error.message),
+    refetchQueries: ["Stores"],
+  });
+
   const handleSubmit = form.handleSubmit((values) => {
-    console.log(values);
+    createStore({
+      variables: {
+        data: {
+          name: values.name,
+          description: values.description,
+          currencyCode: values.currencyCode,
+        },
+      },
+    });
+
+    onSubmit?.();
   });
 
   return (

@@ -5,7 +5,7 @@ import { useSession } from "@/providers/session";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Form } from "@/components/ui/form";
@@ -69,16 +69,10 @@ function SettingsPage() {
     if (data) form.reset(data);
   }, [data]);
 
-  const { toast } = useToast();
-
   const [updateStore] = useMutation(UPDATE_STORE, {
     refetchQueries: ["GeneralSettings"],
-    onCompleted: () => {
-      toast({ title: "General settings saved" });
-    },
-    onError: (error) => {
-      toast({ title: "Couldn't save settings", description: error.message, variant: "destructive" });
-    },
+    onCompleted: () => toast.success("Settings updated"),
+    onError: (error) => toast.error(error.message),
   });
 
   const handleSubmit = form.handleSubmit(

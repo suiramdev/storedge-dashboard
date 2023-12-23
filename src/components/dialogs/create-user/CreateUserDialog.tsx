@@ -24,6 +24,10 @@ export function CreateUserDialog({ open, onOpenChange, children }: CreateUserDia
 
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
+  const handleSubmit = () => {
+    onOpenChange ? onOpenChange(false) : setDefaultOpen(false);
+  };
+
   if (isDesktop) {
     return (
       <Dialog open={open ?? defaultOpen} onOpenChange={onOpenChange ?? setDefaultOpen}>
@@ -32,7 +36,7 @@ export function CreateUserDialog({ open, onOpenChange, children }: CreateUserDia
           <DialogHeader>
             <DialogTitle>Create a user</DialogTitle>
           </DialogHeader>
-          <CreateUserForm />
+          <CreateUserForm onSubmit={handleSubmit} />
         </DialogContent>
       </Dialog>
     );
@@ -45,7 +49,7 @@ export function CreateUserDialog({ open, onOpenChange, children }: CreateUserDia
         <DrawerHeader>
           <DrawerTitle>Create a user</DrawerTitle>
         </DrawerHeader>
-        <CreateUserForm className="px-4" />
+        <CreateUserForm className="px-4" onSubmit={handleSubmit} />
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
             <Button variant="outline">Cancel</Button>

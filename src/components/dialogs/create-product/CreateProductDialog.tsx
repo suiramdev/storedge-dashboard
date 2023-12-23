@@ -24,6 +24,10 @@ export function CreateProductDialog({ open, onOpenChange, children }: CreateProd
 
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
+  const handleSubmit = () => {
+    onOpenChange ? onOpenChange(false) : setDefaultOpen(false);
+  };
+
   if (isDesktop) {
     return (
       <Dialog open={open ?? defaultOpen} onOpenChange={onOpenChange ?? setDefaultOpen}>
@@ -32,7 +36,7 @@ export function CreateProductDialog({ open, onOpenChange, children }: CreateProd
           <DialogHeader>
             <DialogTitle>Create a product</DialogTitle>
           </DialogHeader>
-          <CreateProductForm />
+          <CreateProductForm onSubmit={handleSubmit} />
         </DialogContent>
       </Dialog>
     );
@@ -45,7 +49,7 @@ export function CreateProductDialog({ open, onOpenChange, children }: CreateProd
         <DrawerHeader>
           <DrawerTitle>Create a product</DrawerTitle>
         </DrawerHeader>
-        <CreateProductForm className="px-4" />
+        <CreateProductForm className="px-4" onSubmit={handleSubmit} />
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
             <Button variant="outline">Cancel</Button>

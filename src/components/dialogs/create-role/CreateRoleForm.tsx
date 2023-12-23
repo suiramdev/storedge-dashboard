@@ -1,6 +1,8 @@
+import { gql, useMutation } from "@apollo/client";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
@@ -17,6 +19,15 @@ import { Button } from "@/components/ui/button";
 import { CaretSortIcon } from "@radix-ui/react-icons";
 import { CheckIcon, ListChecksIcon } from "lucide-react";
 
+const CREATE_ROLE = gql`
+  mutation CreateRole($data: RoleCreateInput!) {
+    createOneRole(data: $data) {
+      id
+      name
+    }
+  }
+`;
+
 const availableScopes = ["create:product", "delete:product", "write:product", "create:store", "delete:store"];
 
 const formSchema = z.object({
@@ -25,10 +36,11 @@ const formSchema = z.object({
 });
 
 interface CreateRoleFormProps {
+  onSubmit?: () => void;
   className?: string;
 }
 
-export function CreateRoleForm({ className }: CreateRoleFormProps) {
+export function CreateRoleForm({ onSubmit, className }: CreateRoleFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -37,8 +49,23 @@ export function CreateRoleForm({ className }: CreateRoleFormProps) {
     },
   });
 
+  const [createRole] = useMutation(CREATE_ROLE, {
+    onCompleted: () => toast.success("Role created"),
+    onError: (error) => toast.error(error.message),
+    refetchQueries: ["Roles"],
+  });
+
   const handleSubmit = form.handleSubmit((values) => {
-    console.log(values);
+    createRole({
+      variables: {
+        data: {
+          name: values.name,
+          scopes: { set: values.scopes },
+        },
+      },
+    });
+
+    onSubmit?.();
   });
 
   return (

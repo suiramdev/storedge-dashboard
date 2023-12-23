@@ -4,7 +4,7 @@ import { roleModel, userModel } from "@/types";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { apolloClient } from "@/lib/apollo";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
@@ -72,6 +72,7 @@ function AccessControlSettingsPage() {
     variables: {
       ids: removedRoles,
     },
+    onError: (error) => toast.error(error.message),
   });
 
   const [removedUsers, setRemovedUsers] = useState<string[]>([]);
@@ -79,16 +80,15 @@ function AccessControlSettingsPage() {
     variables: {
       ids: removedUsers,
     },
+    onError: (error) => toast.error(error.message),
   });
 
-  const { toast } = useToast();
-
   const handleSubmit = form.handleSubmit(
-    (data) => {
+    () => {
       removedRoles.length > 0 && deleteRoles();
       removedUsers.length > 0 && deleteUsers();
 
-      toast({ title: "Settings saved" });
+      toast.success("Settings updated");
 
       apolloClient.refetchQueries({
         include: ["AccessControlSettings"],

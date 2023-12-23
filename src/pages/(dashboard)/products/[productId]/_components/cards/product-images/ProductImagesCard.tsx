@@ -15,7 +15,7 @@ import {
 import { arrayMove, SortableContext, rectSortingStrategy } from "@dnd-kit/sortable";
 import { ProductImagesCardItem } from "./ProductImagesCardItem";
 import { ProductImageDropZone } from "./ProductImageDropZone";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { TrashIcon } from "@radix-ui/react-icons";
 
@@ -58,14 +58,8 @@ export function ProductImagesCard() {
 
   const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
 
-  const { toast } = useToast();
-
   const [updateProductImagesOrder] = useMutation(UPDATE_PRODUCT_IMAGES_ORDER, {
-    onCompleted: () => {
-      toast({
-        title: "Saved images order",
-      });
-    },
+    onCompleted: () => toast.success("Product images updated"),
     refetchQueries: ["ProductImages"],
   });
 

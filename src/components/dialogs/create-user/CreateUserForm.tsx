@@ -1,10 +1,21 @@
+import { gql, useMutation } from "@apollo/client";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+
+const CREATE_USER = gql`
+  mutation CreateUser($data: UserCreateInput!) {
+    createOneUser(data: $data) {
+      id
+      email
+    }
+  }
+`;
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -12,10 +23,11 @@ const formSchema = z.object({
 });
 
 interface CreateUserFormProps {
+  onSubmit?: () => void;
   className?: string;
 }
 
-export function CreateUserForm({ className }: CreateUserFormProps) {
+export function CreateUserForm({ onSubmit, className }: CreateUserFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -24,8 +36,23 @@ export function CreateUserForm({ className }: CreateUserFormProps) {
     },
   });
 
+  const [createUser] = useMutation(CREATE_USER, {
+    onCompleted: () => toast.success("User created"),
+    onError: (error) => toast.error(error.message),
+    refetchQueries: ["Users"],
+  });
+
   const handleSubmit = form.handleSubmit((values) => {
-    console.log(values);
+    createUser({
+      variables: {
+        data: {
+          email: values.email,
+          password: values.password,
+        },
+      },
+    });
+
+    onSubmit?.();
   });
 
   return (

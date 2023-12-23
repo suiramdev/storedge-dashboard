@@ -1,6 +1,6 @@
 import { gql, useMutation } from "@apollo/client";
 import { useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { useSession } from "@/providers/session";
 import {
   AlertDialog,
@@ -41,20 +41,17 @@ interface DeleteStoreDialogProps {
 
 export function DeleteStoreDialog({ id, open, onOpenChange, onCompleted, children }: DeleteStoreDialogProps) {
   const [defaultOpen, setDefaultOpen] = useState(false);
-  const { toast } = useToast();
   const selectStore = useSession((state) => state.selectStore);
 
   const [deleteStore] = useMutation(DELETE_STORE, {
     variables: { id },
     onCompleted: () => {
       selectStore(null);
-      toast({ title: "Store deleted" });
+      toast.success("Store deleted");
       onOpenChange ? onOpenChange(false) : setDefaultOpen(false);
       onCompleted && onCompleted();
     },
-    onError: (error) => {
-      toast({ title: "Couldn't delete", description: error.message, variant: "destructive" });
-    },
+    onError: (error) => toast.error(error.message),
     refetchQueries: ["Stores"],
   });
 
