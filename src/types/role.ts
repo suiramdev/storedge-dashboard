@@ -5,6 +5,7 @@ export const roleModel = z.object({
   id: z.string().uuid(),
   name: z.string(),
   scopes: z.array(z.string()).default([]),
+  persitent: z.boolean().default(false),
 });
 
 export interface Role extends z.infer<typeof roleModel> {

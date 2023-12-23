@@ -20,7 +20,7 @@ type ThemeProviderProps = {
   storageKey?: string;
 };
 
-function ThemeProvider({
+export function ThemeProvider({
   children,
   defaultTheme = "system",
   storageKey = "vite-ui-theme",
@@ -65,5 +65,3 @@ export const useTheme = () => {
 
   return context;
 };
-
-export default ThemeProvider;

@@ -2,7 +2,7 @@ import { gql, useMutation, useQuery } from "@apollo/client";
 import { useFormContext } from "react-hook-form";
 import { useState, useEffect } from "react";
 import { ProductImage } from "@/types";
-import DeleteProductImagesDialog from "@/components/dialogs/DeleteProductImagesDialog";
+import { DeleteProductImagesDialog } from "@/components/dialogs/delete-product-images";
 import {
   DragEndEvent,
   DndContext,

@@ -2,8 +2,7 @@ import { useSession, SessionStatus } from "@/providers/session";
 import { useShallow } from "zustand/react/shallow";
 import LoginPage from "@/pages/_login";
 import StoreSelectionPage from "@/pages/_store-selection";
-import Topbar from "@/components/layout/Topbar";
-import Sidebar from "@/components/layout/Sidebar";
+import { Topbar, Sidebar } from "@/components/layout";
 import { Outlet } from "react-router-dom";
 
 function Layout() {

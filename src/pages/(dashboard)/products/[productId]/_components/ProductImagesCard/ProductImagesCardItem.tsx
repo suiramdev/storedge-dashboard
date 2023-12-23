@@ -1,11 +1,11 @@
-import { ProductImage } from "@/types";
 import { useState } from "react";
+import { ProductImage } from "@/types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { GripVerticalIcon } from "lucide-react";
-import clsx from "clsx";
+import { cn } from "@/lib/utils";
 
 interface ProductImagesCardItem {
   image: ProductImage;
@@ -37,7 +37,7 @@ function ProductImagesCardItem({ image, onCheckedChange, draggable = true }: Pro
     >
       <img className="h-full w-full object-contain object-center" src={image.file.url} alt={image.alt} />
       <div
-        className={clsx(
+        className={cn(
           "absolute left-0 top-0 h-full w-full bg-secondary/50",
           checked ? "visible" : "invisible group-hover:visible",
         )}

@@ -10,11 +10,16 @@ export type Path =
   | `/products/:productId`
   | `/products/:productId/:variantId`
   | `/settings`
-  | `/settings/access-control`;
+  | `/settings/access-control`
+  | `/settings/access-control/roles/:id`
+  | `/settings/access-control/users/:id`;
 
 export type Params = {
   "/products/:productId": { productId: string };
   "/products/:productId/:variantId": { productId: string; variantId: string };
+  "/settings/access-control/roles/:id": { id: string };
+  "/settings/access-control/roles/:id": { id: string };
+  "/settings/access-control/users/:id": { id: string };
 };
 
 export type ModalPath = `/search`;

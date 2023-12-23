@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
 import { PlusCircleIcon } from "lucide-react";
-import CreateStoreDialog from "../dialogs/CreateStoreDialog";
+import { CreateStoreDialog } from "@/components/dialogs/create-store";
 
 const STORES = gql`
   query Stores {
@@ -29,7 +29,7 @@ const STORES = gql`
   }
 `;
 
-function StoreSwitcher() {
+export function StoreSwitcher() {
   const [opened, open] = useState<boolean>(false);
   const { selectedStoreID: selectedStoreId, selectStore } = useSession(
     useShallow((state) => ({ selectedStoreID: state.selectedStoreId, selectStore: state.selectStore })),
@@ -104,5 +104,3 @@ function StoreSwitcher() {
     </>
   );
 }
-
-export default StoreSwitcher;

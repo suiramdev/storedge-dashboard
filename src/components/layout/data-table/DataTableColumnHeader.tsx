@@ -1,4 +1,4 @@
-import { ArrowDownIcon, ArrowUpIcon, CaretSortIcon, EyeNoneIcon } from "@radix-ui/react-icons";
+import { ArrowDownIcon, ArrowUpIcon, CaretSortIcon } from "@radix-ui/react-icons";
 import { Column } from "@tanstack/react-table";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,11 @@ interface DataTableColumnHeaderProps<TData, TValue> extends React.HTMLAttributes
   title: string;
 }
 
-function DataTableColumnHeader<TData, TValue>({ column, title, className }: DataTableColumnHeaderProps<TData, TValue>) {
+export function DataTableColumnHeader<TData, TValue>({
+  column,
+  title,
+  className,
+}: DataTableColumnHeaderProps<TData, TValue>) {
   if (!column.getCanSort()) {
     return <div className={cn(className)}>{title}</div>;
   }
@@ -48,5 +52,3 @@ function DataTableColumnHeader<TData, TValue>({ column, title, className }: Data
     </div>
   );
 }
-
-export default DataTableColumnHeader;

@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 import { useSession } from "@/providers/session";
 import { useDropzone } from "react-dropzone";
-import clsx from "clsx";
+import { cn } from "@/lib/utils";
 import { ImagePlusIcon, Loader2Icon } from "lucide-react";
 import { apolloClient } from "@/lib/apollo";
 import { useState } from "react";
@@ -97,7 +97,7 @@ function ProductImageDropZone({ id, orderIndex }: ProductImageDropZoneProps) {
     </div>
   ) : (
     <button
-      className={clsx(
+      className={cn(
         "group flex w-full flex-col items-center justify-center space-y-2 rounded-md border py-6",
         isDragActive
           ? "border-solid border-primary bg-primary/25"
@@ -108,7 +108,7 @@ function ProductImageDropZone({ id, orderIndex }: ProductImageDropZoneProps) {
     >
       <input {...getInputProps()} />
       <ImagePlusIcon
-        className={clsx("h-4 w-4 text-muted-foreground group-hover:text-primary", isDragActive && "text-primary")}
+        className={cn("h-4 w-4 text-muted-foreground group-hover:text-primary", isDragActive && "text-primary")}
       />
       <span>
         Drag and drop or <span className="text-primary hover:cursor-pointer hover:underline">choose file</span>

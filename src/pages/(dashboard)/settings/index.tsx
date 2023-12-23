@@ -4,13 +4,14 @@ import { CurrencyCode } from "@/types";
 import { useSession } from "@/providers/session";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Form } from "@/components/ui/form";
 import StoreDetailsCard from "./_components/StoreDetailsCard";
 import { TrashIcon } from "lucide-react";
-import DeleteStoreDialog from "@/components/dialogs/DeleteStoreDialog";
+import { DeleteStoreDialog } from "@/components/dialogs/delete-store";
 
 const GENERAL_SETTINGS = gql`
   query GeneralSettings($storeId: String!) {
@@ -25,7 +26,6 @@ const GENERAL_SETTINGS = gql`
 const UPDATE_STORE = gql`
   mutation UpdateStore($where: StoreWhereUniqueInput!, $data: StoreUpdateInput!) {
     updateOneStore(where: $where, data: $data) {
-      id
       name
       description
       currencyCode
@@ -59,18 +59,20 @@ function SettingsPage() {
     },
   });
 
-  useQuery(GENERAL_SETTINGS, {
+  const { data } = useQuery(GENERAL_SETTINGS, {
     variables: {
       storeId: selectedStoreId,
     },
-    onCompleted: (data) => {
-      form.reset(data);
-    },
   });
+
+  useEffect(() => {
+    if (data) form.reset(data);
+  }, [data]);
 
   const { toast } = useToast();
 
   const [updateStore] = useMutation(UPDATE_STORE, {
+    refetchQueries: ["GeneralSettings"],
     onCompleted: () => {
       toast({ title: "General settings saved" });
     },
@@ -91,8 +93,6 @@ function SettingsPage() {
           },
         },
       });
-
-      form.reset(data);
     },
     (errors) => console.log(errors),
   );

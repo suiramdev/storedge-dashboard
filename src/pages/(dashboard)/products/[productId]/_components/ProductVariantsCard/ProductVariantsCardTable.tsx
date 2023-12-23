@@ -1,8 +1,7 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import { ProductVariant } from "@/types";
 import { useFieldArray, useFormContext } from "react-hook-form";
-import DataTableColumnHeader from "@/components/layout/DataTable/DataTableColumnHeader";
-import DataTable from "@/components/layout/DataTable";
+import { DataTable, DataTableColumnHeader } from "@/components/layout/data-table";
 import {
   DropdownMenu,
   DropdownMenuContent,

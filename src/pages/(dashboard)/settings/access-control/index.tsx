@@ -1,13 +1,16 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql, useQuery, useMutation } from "@apollo/client";
 import { z } from "zod";
+import { roleModel, userModel } from "@/types";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
+import { useToast } from "@/components/ui/use-toast";
+import { apolloClient } from "@/lib/apollo";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import RolesCard from "./_components/RolesCard";
 import UsersCard from "./_components/UsersCard";
-import { roleModel, userModel } from "@/types";
 
 const ACCCESS_CONTROL_SETTINGS = gql`
   query AccessControlSettings {
@@ -15,6 +18,7 @@ const ACCCESS_CONTROL_SETTINGS = gql`
       id
       name
       scopes
+      persistent
     }
     users {
       id
@@ -23,6 +27,22 @@ const ACCCESS_CONTROL_SETTINGS = gql`
         name
       }
       persistent
+    }
+  }
+`;
+
+const DELETE_ROLES = gql`
+  mutation DeleteRoles($ids: [String!]!) {
+    deleteManyRole(where: { id: { in: $ids } }) {
+      count
+    }
+  }
+`;
+
+const DELETE_USERS = gql`
+  mutation DeleteUsers($ids: [String!]!) {
+    deleteManyUser(where: { id: { in: $ids } }) {
+      count
     }
   }
 `;
@@ -41,15 +61,38 @@ function AccessControlSettingsPage() {
     },
   });
 
-  useQuery(ACCCESS_CONTROL_SETTINGS, {
-    onCompleted: (data) => {
-      form.reset(data);
+  const { data } = useQuery(ACCCESS_CONTROL_SETTINGS);
+
+  useEffect(() => {
+    if (data) form.reset(data);
+  }, [data]);
+
+  const [removedRoles, setRemovedRoles] = useState<string[]>([]);
+  const [deleteRoles] = useMutation(DELETE_ROLES, {
+    variables: {
+      ids: removedRoles,
     },
   });
 
+  const [removedUsers, setRemovedUsers] = useState<string[]>([]);
+  const [deleteUsers] = useMutation(DELETE_USERS, {
+    variables: {
+      ids: removedUsers,
+    },
+  });
+
+  const { toast } = useToast();
+
   const handleSubmit = form.handleSubmit(
     (data) => {
-      form.reset(data);
+      removedRoles.length > 0 && deleteRoles();
+      removedUsers.length > 0 && deleteUsers();
+
+      toast({ title: "Settings saved" });
+
+      apolloClient.refetchQueries({
+        include: ["AccessControlSettings"],
+      });
     },
     (errors) => console.log(errors),
   );
@@ -65,8 +108,8 @@ function AccessControlSettingsPage() {
         </div>
         <Separator className="my-4" />
         <div className="flex flex-col gap-4">
-          <RolesCard />
-          <UsersCard />
+          <RolesCard onRoleRemoved={(role) => setRemovedRoles([role.id, ...removedRoles])} />
+          <UsersCard onUserRemoved={(user) => setRemovedUsers([user.id, ...removedUsers])} />
         </div>
       </form>
     </Form>

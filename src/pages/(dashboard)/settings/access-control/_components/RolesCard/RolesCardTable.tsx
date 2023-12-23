@@ -1,10 +1,9 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import { Role } from "@/types";
 import { useFieldArray, useFormContext } from "react-hook-form";
-import DataTableColumnHeader from "@/components/layout/DataTable/DataTableColumnHeader";
+import { DataTable, DataTableColumnHeader } from "@/components/layout/data-table";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import DataTable from "@/components/layout/DataTable";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,8 +11,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { MoreVerticalIcon, TrashIcon } from "lucide-react";
+import { MoreVerticalIcon, PencilIcon, TrashIcon } from "lucide-react";
 import { useMemo } from "react";
+import { Link } from "@/router";
 
 const columnHelper = createColumnHelper<Role>();
 
@@ -33,14 +33,15 @@ function RolesCardTable({ onRoleRemoved }: RolesCardTableProps) {
       }),
       columnHelper.accessor("scopes", {
         header: ({ column }) => <DataTableColumnHeader column={column} title="Scopes" />,
-        cell: ({ getValue }) => (
-          <ScrollArea className="w-96 whitespace-nowrap rounded-md border">
-            <div className="flex w-max space-x-4 p-4">
-              {getValue()?.map((scope) => <Badge variant="outline">{scope}</Badge>)}
-            </div>
-            <ScrollBar orientation="horizontal" />
-          </ScrollArea>
-        ),
+        cell: ({ getValue }) =>
+          getValue().length > 0 && (
+            <ScrollArea className="w-96 whitespace-nowrap rounded-md border">
+              <div className="flex w-max space-x-4 p-4">
+                {getValue()?.map((scope) => <Badge variant="outline">{scope}</Badge>)}
+              </div>
+              <ScrollBar orientation="horizontal" />
+            </ScrollArea>
+          ),
       }),
       columnHelper.display({
         id: "edit",
@@ -59,14 +60,21 @@ function RolesCardTable({ onRoleRemoved }: RolesCardTableProps) {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="h-8 w-8 p-0">
-                    <span className="sr-only">Open menu</span>
+                    <span className="sr-only"></span>
                     <MoreVerticalIcon className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
+                  <Link to="/settings/access-control/roles/:id" params={{ id: row.original.id }}>
+                    <DropdownMenuItem>
+                      <PencilIcon className="mr-2 h-4 w-4" />
+                      Edit
+                    </DropdownMenuItem>
+                  </Link>
                   <DropdownMenuItem
                     className="hover:!bg-destructive hover:!text-destructive-foreground"
                     onClick={handleRemove}
+                    disabled={row.original.persistent}
                   >
                     <TrashIcon className="mr-2 h-4 w-4" />
                     Delete

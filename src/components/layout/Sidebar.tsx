@@ -11,7 +11,7 @@ import {
   TicketIcon,
   UsersIcon,
 } from "lucide-react";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CaretDownIcon } from "@radix-ui/react-icons";
@@ -80,7 +80,7 @@ const SidebarLink = ({ name, icon, variant, ...props }: SidebarLinkProps) => {
   );
 };
 
-function Sidebar() {
+export function Sidebar() {
   return (
     <aside className="flex flex-col space-y-6 overflow-y-scroll rounded-lg border px-4 py-6">
       <div className="flex flex-1 flex-col space-y-6">
@@ -110,5 +110,3 @@ function Sidebar() {
     </aside>
   );
 }
-
-export default Sidebar;

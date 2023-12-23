@@ -1,7 +1,7 @@
 import { gql, useMutation } from "@apollo/client";
-import { AlertDialogProps } from "@radix-ui/react-alert-dialog";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
+import { useSession } from "@/providers/session";
 import {
   AlertDialog,
   AlertDialogTrigger,
@@ -14,51 +14,55 @@ import {
   AlertDialogFooter,
 } from "@/components/ui/alert-dialog";
 
-const DELETE_PRODUCT = gql`
-  mutation DeleteProduct($id: String!) {
-    deleteManyProductVariant(where: { productId: { equals: $id } }) {
+const DELETE_STORE = gql`
+  mutation DeleteStore($id: String!) {
+    deleteManyProductVariant(where: { product: { is: { store: { is: { id: { equals: $id } } } } } }) {
       count
     }
-    deleteManyProductImage(where: { productId: { equals: $id } }) {
+    deleteManyProductImage(where: { product: { is: { store: { is: { id: { equals: $id } } } } } }) {
       count
     }
-    deleteOneProduct(where: { id: $id }) {
+    deleteManyProduct(where: { store: { is: { id: { equals: $id } } } }) {
+      count
+    }
+    deleteOneStore(where: { id: $id }) {
       id
     }
   }
 `;
 
-interface DeleteProductDialogProps extends AlertDialogProps {
+interface DeleteStoreDialogProps {
   id: string;
-  onCompleted?: () => void;
   open?: boolean;
   onOpenChange?: (value: boolean) => void;
+  onCompleted?: () => void;
   children?: React.ReactNode;
 }
 
-function DeleteProductDialog({ id, onCompleted, open, onOpenChange, children, ...props }: DeleteProductDialogProps) {
-  const [show, setShow] = useState(false);
+export function DeleteStoreDialog({ id, open, onOpenChange, onCompleted, children }: DeleteStoreDialogProps) {
+  const [defaultOpen, setDefaultOpen] = useState(false);
   const { toast } = useToast();
+  const selectStore = useSession((state) => state.selectStore);
 
-  const [handleDelete] = useMutation(DELETE_PRODUCT, {
+  const [deleteStore] = useMutation(DELETE_STORE, {
     variables: { id },
-    refetchQueries: ["Products"],
     onCompleted: () => {
-      toast({ title: "Product deleted" });
-      onOpenChange ? onOpenChange(false) : setShow(false);
+      selectStore(null);
+      toast({ title: "Store deleted" });
+      onOpenChange ? onOpenChange(false) : setDefaultOpen(false);
       onCompleted && onCompleted();
     },
     onError: (error) => {
       toast({ title: "Couldn't delete", description: error.message, variant: "destructive" });
     },
+    refetchQueries: ["Stores"],
   });
 
   return (
     <AlertDialog
-      {...props}
-      open={open ?? show}
+      open={open ?? defaultOpen}
       onOpenChange={(value) => {
-        onOpenChange ? onOpenChange(value) : setShow(value);
+        onOpenChange ? onOpenChange(value) : setDefaultOpen(value);
         setTimeout(() => (document.body.style.pointerEvents = ""), 200); // Weird fix for #468 shadcn-ui's issue
       }}
     >
@@ -72,11 +76,9 @@ function DeleteProductDialog({ id, onCompleted, open, onOpenChange, children, ..
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={() => handleDelete()}>Delete</AlertDialogAction>
+          <AlertDialogAction onClick={() => deleteStore()}>Delete</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
   );
 }
-
-export default DeleteProductDialog;

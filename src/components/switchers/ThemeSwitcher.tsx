@@ -6,9 +6,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useTheme } from "@/components/providers/ThemeProvider";
+import { useTheme } from "@/components/providers/theme";
 
-function ThemeSwitcher() {
+export function ThemeSwitcher() {
   const { setTheme } = useTheme();
 
   return (
@@ -28,5 +28,3 @@ function ThemeSwitcher() {
     </DropdownMenu>
   );
 }
-
-export default ThemeSwitcher;

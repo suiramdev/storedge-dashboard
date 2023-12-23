@@ -3,7 +3,7 @@ import { useNavigate } from "@/router";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ProductStatus } from "@/types";
-import DeleteProductDialog from "@/components/dialogs/DeleteProductDialog";
+import { DeleteProductDialog } from "@/components/dialogs/delete-product";
 import { Button } from "@/components/ui/button";
 import { TrashIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";

@@ -11,7 +11,6 @@ import { ArrowLeftIcon } from "lucide-react";
 import { ProductStatus } from "@/types";
 import ProductDetailsCard from "./_components/ProductDetailsCard";
 import ProductStatusCard from "./_components/ProductStatusCard";
-import ProductRankingCard from "./_components/ProductRankingCard";
 import ProductImagesCard from "./_components/ProductImagesCard";
 import ProductVariantsCard from "./_components/ProductVariantsCard";
 

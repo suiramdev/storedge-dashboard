@@ -6,7 +6,7 @@ interface DataTableViewOptionsProps<TData> extends React.HTMLAttributes<HTMLInpu
   columnId: string;
 }
 
-function DataTableSearchFilter<TData>({ table, columnId, ...props }: DataTableViewOptionsProps<TData>) {
+export function DataTableSearchFilter<TData>({ table, columnId, ...props }: DataTableViewOptionsProps<TData>) {
   return (
     <Input
       {...props}
@@ -16,5 +16,3 @@ function DataTableSearchFilter<TData>({ table, columnId, ...props }: DataTableVi
     />
   );
 }
-
-export default DataTableSearchFilter;

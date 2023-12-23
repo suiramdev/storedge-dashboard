@@ -1,11 +1,10 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import { User } from "@/types";
 import { useFieldArray, useFormContext } from "react-hook-form";
-import DataTableColumnHeader from "@/components/layout/DataTable/DataTableColumnHeader";
+import { DataTable, DataTableColumnHeader } from "@/components/layout/data-table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import DataTable from "@/components/layout/DataTable";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,8 +12,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { MoreVerticalIcon, TrashIcon } from "lucide-react";
+import { MoreVerticalIcon, PencilIcon, TrashIcon } from "lucide-react";
 import { useMemo } from "react";
+import { Link } from "@/router";
 
 const columnHelper = createColumnHelper<User>();
 
@@ -29,7 +29,7 @@ function UsersCardTable({ onUserRemoved }: UsersCardTableProps) {
   const columns = useMemo(
     () => [
       columnHelper.accessor("email", {
-        header: ({ column }) => <DataTableColumnHeader column={column} title="e-mail" />,
+        header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />,
         cell: ({ getValue }) => (
           <div className="flex items-center space-x-2">
             <Avatar className="h-8 w-8">
@@ -68,9 +68,16 @@ function UsersCardTable({ onUserRemoved }: UsersCardTableProps) {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
+                  <Link to="/settings/access-control/users/:id" params={{ id: row.original.id }}>
+                    <DropdownMenuItem>
+                      <PencilIcon className="mr-2 h-4 w-4" />
+                      Edit
+                    </DropdownMenuItem>
+                  </Link>
                   <DropdownMenuItem
                     className="hover:!bg-destructive hover:!text-destructive-foreground"
                     onClick={handleRemove}
+                    disabled={row.original.persistent}
                   >
                     <TrashIcon className="mr-2 h-4 w-4" />
                     Delete

@@ -13,10 +13,10 @@ import {
 } from "@tanstack/react-table";
 import clsx from "clsx";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import DataTableSearchFilter from "./DataTableSearchFilter";
+import { DataTableSearchFilter } from "./DataTableSearchFilter";
 import { DataTableViewOptions } from "./DataTableViewOptions";
-import DataTablePagination from "./DataTablePagination";
-import DataTableRowsActions from "./DataTableRowsActions";
+import { DataTablePagination } from "./DataTablePagination";
+import { DataTableRowsActions } from "./DataTableRowsActions";
 
 interface DataTableProps<TData> {
   columns: ColumnDef<TData, any>[];
@@ -30,7 +30,15 @@ interface DataTableProps<TData> {
   className?: string;
 }
 
-function DataTable<TData>({ columns, data, search, viewable, rowsActions, paginated, className }: DataTableProps<TData>) {
+export function DataTable<TData>({
+  columns,
+  data,
+  search,
+  viewable,
+  rowsActions,
+  paginated,
+  className,
+}: DataTableProps<TData>) {
   const [rowSelection, setRowSelection] = useState({});
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -112,5 +120,3 @@ function DataTable<TData>({ columns, data, search, viewable, rowsActions, pagina
     </div>
   );
 }
-
-export default DataTable;
