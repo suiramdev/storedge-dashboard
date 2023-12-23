@@ -3,13 +3,13 @@ import { useFormContext, useFieldArray } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { v4 as uuid } from "uuid";
 import { PlusIcon } from "lucide-react";
-import ProductVariantsCardTable from "./ProductVariantsCardTable";
+import { ProductVariantsTable } from "./ProductVariantsTable";
 
 interface ProductVariantsCardProps {
   onVariantRemoved?: (variant: ProductVariant) => void;
 }
 
-function ProductVariantsCard({ onVariantRemoved }: ProductVariantsCardProps) {
+export function ProductVariantsCard({ onVariantRemoved }: ProductVariantsCardProps) {
   const form = useFormContext();
   const variants = useFieldArray({ control: form.control, name: "variants" });
 
@@ -36,9 +36,7 @@ function ProductVariantsCard({ onVariantRemoved }: ProductVariantsCardProps) {
         </Button>
       </div>
       <div className="divide-y"></div>
-      <ProductVariantsCardTable onVariantRemoved={onVariantRemoved} />
+      <ProductVariantsTable onVariantRemoved={onVariantRemoved} />
     </div>
   );
 }
-
-export default ProductVariantsCard;

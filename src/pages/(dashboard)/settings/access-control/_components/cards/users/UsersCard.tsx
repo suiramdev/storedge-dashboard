@@ -2,13 +2,13 @@ import { User } from "@/types";
 import { CreateUserDialog } from "@/components/dialogs/create-user";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
-import RolesCardTable from "./UsersCardTable";
+import { UsersTable } from "./UsersTable";
 
 interface UsersCardProps {
   onUserRemoved?: (user: User) => void;
 }
 
-function UsersCard({ onUserRemoved }: UsersCardProps) {
+export function UsersCard({ onUserRemoved }: UsersCardProps) {
   return (
     <div className="flex flex-col gap-4">
       <div className="space-y-4 rounded-lg border bg-background px-4 py-6">
@@ -20,10 +20,8 @@ function UsersCard({ onUserRemoved }: UsersCardProps) {
             </Button>
           </CreateUserDialog>
         </div>
-        <RolesCardTable onUserRemoved={onUserRemoved} />
+        <UsersTable onUserRemoved={onUserRemoved} />
       </div>
     </div>
   );
 }
-
-export default UsersCard;

@@ -48,7 +48,7 @@ interface ProductImageDropZoneProps {
 }
 
 // TODO: Loading state during uploading
-function ProductImageDropZone({ id, orderIndex }: ProductImageDropZoneProps) {
+export function ProductImageDropZone({ id, orderIndex }: ProductImageDropZoneProps) {
   const selectedStoreId = useSession((state) => state.selectedStoreId);
   const [loading, setLoading] = useState(false);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -117,5 +117,3 @@ function ProductImageDropZone({ id, orderIndex }: ProductImageDropZoneProps) {
     </button>
   );
 }
-
-export default ProductImageDropZone;

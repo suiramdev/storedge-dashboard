@@ -9,10 +9,10 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { ArrowLeftIcon } from "lucide-react";
 import { ProductStatus } from "@/types";
-import ProductDetailsCard from "./_components/ProductDetailsCard";
-import ProductStatusCard from "./_components/ProductStatusCard";
-import ProductImagesCard from "./_components/ProductImagesCard";
-import ProductVariantsCard from "./_components/ProductVariantsCard";
+import { ProductDetailsCard } from "./_components/cards/product-details";
+import { ProductStatusCard } from "./_components/cards/product-status";
+import { ProductImagesCard } from "./_components/cards/product-images/ProductImagesCard";
+import { ProductVariantsCard } from "./_components/cards/product-variants";
 
 const PRODUCT = gql`
   query Product($id: String!) {

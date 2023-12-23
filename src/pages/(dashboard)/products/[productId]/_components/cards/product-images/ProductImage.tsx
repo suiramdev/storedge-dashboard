@@ -6,7 +6,7 @@ interface ProductImageProps {
   style?: React.CSSProperties;
 }
 
-const ProductImage = forwardRef<HTMLDivElement, ProductImageProps>(({ image, style, ...props }, ref) => (
+export const ProductImage = forwardRef<HTMLDivElement, ProductImageProps>(({ image, style, ...props }, ref) => (
   <div
     ref={ref}
     className="group relative rounded-lg border bg-background first:col-span-2 first:row-span-2 hover:cursor-grab"
@@ -17,5 +17,3 @@ const ProductImage = forwardRef<HTMLDivElement, ProductImageProps>(({ image, sty
     <div className="invisible absolute left-0 top-0 h-full w-full bg-black/50 group-hover:visible" />
   </div>
 ));
-
-export default ProductImage;

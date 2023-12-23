@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-function StoreDetailsCard() {
+export function StoreDetailsCard() {
   const form = useFormContext();
 
   return (
@@ -59,5 +59,3 @@ function StoreDetailsCard() {
     </div>
   );
 }
-
-export default StoreDetailsCard;

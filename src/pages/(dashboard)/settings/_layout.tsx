@@ -1,5 +1,5 @@
 import { Separator } from "@/components/ui/separator";
-import NavBar from "./_components/NavBar";
+import { NavBar } from "./_components/NavBar";
 import { Outlet } from "react-router-dom";
 
 function SettingsLayout() {

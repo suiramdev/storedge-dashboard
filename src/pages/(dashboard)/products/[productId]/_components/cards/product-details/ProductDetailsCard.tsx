@@ -3,7 +3,7 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/comp
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
-function ProductDetailsCard() {
+export function ProductDetailsCard() {
   const form = useFormContext();
 
   return (
@@ -50,5 +50,3 @@ function ProductDetailsCard() {
     </div>
   );
 }
-
-export default ProductDetailsCard;

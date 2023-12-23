@@ -9,7 +9,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Form } from "@/components/ui/form";
-import StoreDetailsCard from "./_components/StoreDetailsCard";
+import { StoreDetailsCard } from "./_components/StoreDetailsCard";
 import { TrashIcon } from "lucide-react";
 import { DeleteStoreDialog } from "@/components/dialogs/delete-store";
 

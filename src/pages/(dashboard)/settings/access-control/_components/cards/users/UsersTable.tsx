@@ -18,11 +18,11 @@ import { Link } from "@/router";
 
 const columnHelper = createColumnHelper<User>();
 
-interface UsersCardTableProps {
+interface UsersTableProps {
   onUserRemoved?: (user: User) => void;
 }
 
-function UsersCardTable({ onUserRemoved }: UsersCardTableProps) {
+export function UsersTable({ onUserRemoved }: UsersTableProps) {
   const form = useFormContext();
   const users = form.watch("users");
 
@@ -94,5 +94,3 @@ function UsersCardTable({ onUserRemoved }: UsersCardTableProps) {
 
   return <DataTable className="pt-4" data={users} columns={columns} />;
 }
-
-export default UsersCardTable;

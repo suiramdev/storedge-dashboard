@@ -11,7 +11,7 @@ import {
   getSortedRowModel,
   getPaginationRowModel,
 } from "@tanstack/react-table";
-import clsx from "clsx";
+import { cn } from "@/lib/utils";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { DataTableSearchFilter } from "./DataTableSearchFilter";
 import { DataTableViewOptions } from "./DataTableViewOptions";
@@ -70,7 +70,7 @@ export function DataTable<TData>({
   );
 
   return (
-    <div className={clsx("flex flex-col space-y-4", className)}>
+    <div className={cn("flex flex-col space-y-4", className)}>
       {(search || viewable) && (
         <div className="grid grid-cols-2">
           <div className="flex items-center space-x-2">

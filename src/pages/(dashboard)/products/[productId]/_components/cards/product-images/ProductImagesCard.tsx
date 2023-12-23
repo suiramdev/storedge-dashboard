@@ -13,8 +13,8 @@ import {
   TouchSensor,
 } from "@dnd-kit/core";
 import { arrayMove, SortableContext, rectSortingStrategy } from "@dnd-kit/sortable";
-import ProductImagesCardItem from "./ProductImagesCardItem";
-import ProductImageDropZone from "./ProductImageDropZone";
+import { ProductImagesCardItem } from "./ProductImagesCardItem";
+import { ProductImageDropZone } from "./ProductImageDropZone";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { TrashIcon } from "@radix-ui/react-icons";
@@ -38,7 +38,7 @@ const UPDATE_PRODUCT_IMAGES_ORDER = gql`
   }
 `;
 
-function ProductImagesCard() {
+export function ProductImagesCard() {
   const form = useFormContext();
 
   const [items, setItems] = useState<ProductImage[]>([]);
@@ -129,5 +129,3 @@ function ProductImagesCard() {
     </div>
   );
 }
-
-export default ProductImagesCard;

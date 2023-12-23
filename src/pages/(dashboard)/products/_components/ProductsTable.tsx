@@ -136,7 +136,7 @@ const columns = [
   }),
 ];
 
-function ProductsTable() {
+export function ProductsTable() {
   const selectedStoreId = useSession((state) => state.selectedStoreId);
   const { data } = useQuery(PRODUCTS, {
     variables: {
@@ -169,5 +169,3 @@ function ProductsTable() {
     />
   );
 }
-
-export default ProductsTable;

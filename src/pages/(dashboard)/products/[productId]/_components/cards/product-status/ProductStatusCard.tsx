@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { TrashIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
-function ProductStatusCard() {
+export function ProductStatusCard() {
   const form = useFormContext();
   const navigate = useNavigate();
 
@@ -57,5 +57,3 @@ function ProductStatusCard() {
     </div>
   );
 }
-
-export default ProductStatusCard;

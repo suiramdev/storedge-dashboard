@@ -13,7 +13,7 @@ interface ProductImagesCardItem {
   draggable?: boolean;
 }
 
-function ProductImagesCardItem({ image, onCheckedChange, draggable = true }: ProductImagesCardItem) {
+export function ProductImagesCardItem({ image, onCheckedChange, draggable = true }: ProductImagesCardItem) {
   const [checked, setChecked] = useState(false);
   const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition } = useSortable({
     id: image.id,
@@ -62,5 +62,3 @@ function ProductImagesCardItem({ image, onCheckedChange, draggable = true }: Pro
     </div>
   );
 }
-
-export default ProductImagesCardItem;

@@ -19,11 +19,11 @@ import { useMemo } from "react";
 
 const columnHelper = createColumnHelper<ProductVariant>();
 
-interface ProductVariantsCardTableProps {
+interface ProductVariantsTableProps {
   onVariantRemoved?: (variant: ProductVariant) => void;
 }
 
-function ProductVariantsCardTable({ onVariantRemoved }: ProductVariantsCardTableProps) {
+export function ProductVariantsTable({ onVariantRemoved }: ProductVariantsTableProps) {
   const form = useFormContext();
   const variants = form.watch("variants");
 
@@ -148,5 +148,3 @@ function ProductVariantsCardTable({ onVariantRemoved }: ProductVariantsCardTable
 
   return <DataTable className="pt-4" data={variants} columns={columns} />;
 }
-
-export default ProductVariantsCardTable;

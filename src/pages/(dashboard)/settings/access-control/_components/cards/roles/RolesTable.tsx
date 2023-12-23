@@ -17,11 +17,11 @@ import { Link } from "@/router";
 
 const columnHelper = createColumnHelper<Role>();
 
-interface RolesCardTableProps {
+interface RolesTableProps {
   onRoleRemoved?: (role: Role) => void;
 }
 
-function RolesCardTable({ onRoleRemoved }: RolesCardTableProps) {
+export function RolesTable({ onRoleRemoved }: RolesTableProps) {
   const form = useFormContext();
   const roles = form.watch("roles");
 
@@ -91,5 +91,3 @@ function RolesCardTable({ onRoleRemoved }: RolesCardTableProps) {
 
   return <DataTable className="pt-4" data={roles} columns={columns} />;
 }
-
-export default RolesCardTable;

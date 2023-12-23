@@ -23,7 +23,7 @@ interface NavBarProps {
   className?: string;
 }
 
-function NavBar({ className }: NavBarProps) {
+export function NavBar({ className }: NavBarProps) {
   const { pathname } = useLocation();
 
   return (
@@ -44,5 +44,3 @@ function NavBar({ className }: NavBarProps) {
     </div>
   );
 }
-
-export default NavBar;

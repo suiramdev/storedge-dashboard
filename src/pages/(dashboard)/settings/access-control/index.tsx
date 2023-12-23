@@ -9,8 +9,8 @@ import { apolloClient } from "@/lib/apollo";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import RolesCard from "./_components/RolesCard";
-import UsersCard from "./_components/UsersCard";
+import { RolesCard } from "./_components/cards/roles";
+import { UsersCard } from "./_components/cards/users";
 
 const ACCCESS_CONTROL_SETTINGS = gql`
   query AccessControlSettings {

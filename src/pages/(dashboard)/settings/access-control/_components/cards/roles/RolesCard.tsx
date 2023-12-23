@@ -2,13 +2,13 @@ import { Role } from "@/types";
 import { CreateRoleDialog } from "@/components/dialogs/create-role";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
-import RolesCardTable from "./RolesCardTable";
+import { RolesTable } from "./RolesTable";
 
 interface RolesCardProps {
   onRoleRemoved?: (role: Role) => void;
 }
 
-function RolesCard({ onRoleRemoved }: RolesCardProps) {
+export function RolesCard({ onRoleRemoved }: RolesCardProps) {
   return (
     <div className="flex flex-col gap-4">
       <div className="space-y-4 rounded-lg border bg-background px-4 py-6">
@@ -20,10 +20,8 @@ function RolesCard({ onRoleRemoved }: RolesCardProps) {
             </Button>
           </CreateRoleDialog>
         </div>
-        <RolesCardTable onRoleRemoved={onRoleRemoved} />
+        <RolesTable onRoleRemoved={onRoleRemoved} />
       </div>
     </div>
   );
 }
-
-export default RolesCard;
