@@ -18,7 +18,6 @@ export type Params = {
   "/products/:productId": { productId: string };
   "/products/:productId/:variantId": { productId: string; variantId: string };
   "/settings/access-control/roles/:id": { id: string };
-  "/settings/access-control/roles/:id": { id: string };
   "/settings/access-control/users/:id": { id: string };
 };
 
