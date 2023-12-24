@@ -14,7 +14,7 @@ export function StoreDetailsCard() {
         control={form.control}
         name="store.name"
         render={({ field }) => (
-          <FormItem className="space-y-1">
+          <FormItem className="space-y-2">
             <FormLabel>Name</FormLabel>
             <FormControl>
               <Input {...field} />
@@ -27,7 +27,7 @@ export function StoreDetailsCard() {
         control={form.control}
         name="store.description"
         render={({ field }) => (
-          <FormItem className="space-y-1">
+          <FormItem className="space-y-2">
             <FormLabel>Description</FormLabel>
             <FormControl>
               <Textarea {...field} />
@@ -40,7 +40,7 @@ export function StoreDetailsCard() {
         control={form.control}
         name="store.currencyCode"
         render={({ field }) => (
-          <FormItem className="space-y-1">
+          <FormItem className="space-y-2">
             <FormLabel>Currency</FormLabel>
             <Select onValueChange={field.onChange} defaultValue={field.value}>
               <FormControl>

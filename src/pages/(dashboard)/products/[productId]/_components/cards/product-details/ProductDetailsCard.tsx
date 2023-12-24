@@ -12,7 +12,7 @@ export function ProductDetailsCard() {
         control={form.control}
         name="name"
         render={({ field }) => (
-          <FormItem className="space-y-1">
+          <FormItem className="space-y-2">
             <FormLabel>Name</FormLabel>
             <FormControl>
               <Input {...field} />
@@ -25,7 +25,7 @@ export function ProductDetailsCard() {
         control={form.control}
         name="description"
         render={({ field }) => (
-          <FormItem className="space-y-1">
+          <FormItem className="space-y-2">
             <FormLabel>Description</FormLabel>
             <FormControl>
               <Textarea {...field} />
@@ -38,10 +38,10 @@ export function ProductDetailsCard() {
         control={form.control}
         name="price"
         render={({ field }) => (
-          <FormItem className="space-y-1">
+          <FormItem className="space-y-2">
             <FormLabel>Price</FormLabel>
             <FormControl>
-              <Input type="number" min="0" step="0.01" {...field} />
+              <Input type="price" min="0" step="0.01" {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>

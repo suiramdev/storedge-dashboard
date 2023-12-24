@@ -86,7 +86,7 @@ export function ProductVariantsTable({ onVariantRemoved }: ProductVariantsTableP
               render={({ field }) => (
                 <FormItem className="space-y-2">
                   <FormControl>
-                    <Input placeholder="Amount" type="number" min="0" step="0.01" {...field} />
+                    <Input placeholder="Amount" type="price" min="0" step="0.01" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

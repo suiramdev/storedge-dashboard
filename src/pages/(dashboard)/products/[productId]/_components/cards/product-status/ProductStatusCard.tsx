@@ -18,7 +18,7 @@ export function ProductStatusCard() {
         control={form.control}
         name="status"
         render={({ field }) => (
-          <FormItem className="space-y-1">
+          <FormItem className="space-y-2">
             <FormLabel>Status</FormLabel>
             <Select onValueChange={field.onChange} value={field.value}>
               <FormControl>
@@ -39,7 +39,7 @@ export function ProductStatusCard() {
         control={form.control}
         name="stock"
         render={({ field }) => (
-          <FormItem className="space-y-1">
+          <FormItem className="space-y-2">
             <FormLabel>Stock amount</FormLabel>
             <FormControl>
               <Input placeholder="Amount" min="0" step="1" {...field} />

@@ -45,7 +45,7 @@ function LoginPage() {
                   control={form.control}
                   name="email"
                   render={({ field }) => (
-                    <FormItem className="space-y-1">
+                    <FormItem className="space-y-2">
                       <FormLabel>Email</FormLabel>
                       <FormControl>
                         <Input type="email" placeholder="example@domain.com" {...field} />
@@ -58,7 +58,7 @@ function LoginPage() {
                   control={form.control}
                   name="password"
                   render={({ field }) => (
-                    <FormItem className="space-y-1">
+                    <FormItem className="space-y-2">
                       <FormLabel>Password</FormLabel>
                       <FormControl>
                         <Input type="password" placeholder="••••••••••••••••" {...field} />

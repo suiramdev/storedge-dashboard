@@ -106,7 +106,7 @@ export function CreateProductForm({ onSubmit, className }: CreateProductFormProp
             <FormItem className="space-y-2">
               <FormLabel>Price</FormLabel>
               <FormControl>
-                <Input type="number" min="0" step="0.01" {...field} />
+                <Input type="price" min="0" step="0.01" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
