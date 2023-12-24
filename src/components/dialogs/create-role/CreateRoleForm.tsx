@@ -6,18 +6,8 @@ import { toast } from "sonner";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
-import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
-import {
-  Command,
-  CommandList,
-  CommandInput,
-  CommandGroup,
-  CommandItem,
-  CommandSeparator,
-} from "@/components/ui/command";
 import { Button } from "@/components/ui/button";
-import { CaretSortIcon } from "@radix-ui/react-icons";
-import { CheckIcon, ListChecksIcon } from "lucide-react";
+import { TagInput } from "@/components/layout";
 
 const CREATE_ROLE = gql`
   mutation CreateRole($data: RoleCreateInput!) {
@@ -28,7 +18,23 @@ const CREATE_ROLE = gql`
   }
 `;
 
-const availableScopes = ["create:product", "delete:product", "write:product", "create:store", "delete:store"];
+const availableScopes = [
+  "create:store",
+  "update:store",
+  "delete:store",
+  "create:collection",
+  "update:collection",
+  "delete:collection",
+  "create:product",
+  "update:product",
+  "delete:product",
+  "create:role",
+  "update:role",
+  "delete:role",
+  "create:user",
+  "update:user",
+  "delete:user",
+];
 
 const formSchema = z.object({
   name: z.string().trim().min(1, "Name must be at least 3 characters").max(255, "Name must not exceed 255 characters"),
@@ -87,36 +93,12 @@ export function CreateRoleForm({ onSubmit, className }: CreateRoleFormProps) {
         <FormItem className="space-y-2">
           <FormLabel>Scopes</FormLabel>
           <FormControl>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" role="combobox" className="w-full">
-                  <span>{form.watch("scopes").length} scopes selected</span>
-                  <CaretSortIcon className="ml-auto h-4 w-4 shrink-0 text-muted-foreground" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="p-0" style={{ width: "var(--radix-popover-trigger-width)" }}>
-                <Command>
-                  <CommandList>
-                    <CommandInput placeholder="Search a scope..." />
-                    <CommandGroup>
-                      <CommandItem onSelect={() => form.setValue("scopes", availableScopes)}>
-                        <ListChecksIcon className="mr-2 h-4 w-4" />
-                        Select all
-                      </CommandItem>
-                    </CommandGroup>
-                    <CommandSeparator />
-                    <CommandGroup>
-                      {availableScopes.map((scope) => (
-                        <CommandItem key={scope}>
-                          <span className="truncate">{scope}</span>
-                          {form.watch("scopes").includes(scope) && <CheckIcon className="ml-auto h-4 w-4" />}
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>
+            <TagInput
+              availableTags={availableScopes}
+              selectedTags={form.watch("scopes")}
+              onSelectedTagsChange={(tags) => form.setValue("scopes", tags)}
+              placeholder=""
+            />
           </FormControl>
           <FormMessage />
         </FormItem>
