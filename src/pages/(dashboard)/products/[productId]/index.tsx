@@ -3,17 +3,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams, Link } from "@/router";
 import { useForm } from "react-hook-form";
 import { Product, relatedProductModel } from "@/types";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { ArrowLeftIcon } from "lucide-react";
 import { ProductStatus } from "@/types";
-import ProductDetailsCard from "./_components/ProductDetailsCard";
-import ProductStatusCard from "./_components/ProductStatusCard";
-import ProductRankingCard from "./_components/ProductRankingCard";
-import ProductImagesCard from "./_components/ProductImagesCard";
-import ProductVariantsCard from "./_components/ProductVariantsCard";
+import { ProductDetailsCard } from "./_components/cards/product-details";
+import { ProductStatusCard } from "./_components/cards/product-status";
+import { ProductImagesCard } from "./_components/cards/product-images/ProductImagesCard";
+import { ProductVariantsCard } from "./_components/cards/product-variants";
 
 const PRODUCT = gql`
   query Product($id: String!) {
@@ -76,44 +75,33 @@ function ProductPage() {
     },
   });
 
-  const { toast } = useToast();
-
   const [removedVariants, setRemovedVariants] = useState<string[]>([]);
 
   const [updateProduct] = useMutation(UPDATE_PRODUCT, {
     onCompleted: (data) => {
       form.reset(data.updateOneProduct);
-      toast({
-        title: "Changes saved",
-        description: "Your changes have been saved.",
-      });
+      toast.success("Product updated");
     },
-    onError: (error) => {
-      toast({
-        title: "Couldn't save changes",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
+    onError: (error) => toast.error(error.message),
   });
 
   const handleSubmit = form.handleSubmit(
-    (data) => {
+    (values) => {
       updateProduct({
         variables: {
           where: { id: productId },
           data: {
-            name: { set: data.name },
-            description: { set: data.description },
+            name: { set: values.name },
+            description: { set: values.description },
             // NOTE: A Decimal from decimal.js is expected by the request, so we convert it to a string.
-            price: { set: data.price.toString() },
-            stock: { set: data.stock },
-            status: { set: data.status },
+            price: { set: values.price.toString() },
+            stock: { set: values.stock },
+            status: { set: values.status },
             variants: {
               deleteMany: {
                 id: { in: removedVariants },
               },
-              upsert: data.variants.map((variant) => ({
+              upsert: values.variants.map((variant) => ({
                 where: { id: variant.id },
                 update: {
                   name: { set: variant.name },

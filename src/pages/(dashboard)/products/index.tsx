@@ -1,6 +1,6 @@
-import CreateProductDialog from "@/components/dialogs/CreateProductDialog";
+import { CreateProductDialog } from "@/components/dialogs/create-product";
 import { Button } from "@/components/ui/button";
-import ProductsTable from "./_components/ProductsTable";
+import { ProductsTable } from "./_components/ProductsTable";
 
 function ProductsPage() {
   return (

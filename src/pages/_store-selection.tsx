@@ -4,8 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
+import { CreateStoreDialog } from "@/components/dialogs/create-store";
 import { PlusCircleIcon } from "lucide-react";
-import CreateStoreDialog from "@/components/dialogs/CreateStoreDialog";
 
 const STORES = gql`
   query Stores {

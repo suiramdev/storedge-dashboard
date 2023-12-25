@@ -3,8 +3,7 @@ import { useModals } from "@/router";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import StoreSwitcher from "@/components/switchers/StoreSwitcher";
-import ThemeSwitcher from "@/components/switchers/ThemeSwitcher";
+import { StoreSwitcher, ThemeSwitcher } from "@/components/switchers";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,23 +11,18 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
-import { Button } from "../ui/button";
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 import { LogOutIcon, SettingsIcon } from "lucide-react";
 
-function Topbar() {
+export function Topbar() {
   const signOut = useSession((state) => state.signOut);
   const modals = useModals();
 
   return (
     <div className="grid grid-cols-3 items-center p-6">
       <StoreSwitcher />
-      <Input
-        type="search"
-        placeholder="Search..."
-        className="max-w-[600px]"
-        onClick={() => modals.open("/search")}
-      />
+      <Input type="search" placeholder="Search..." className="max-w-[600px]" onClick={() => modals.open("/search")} />
       <div className="flex items-center space-x-2 justify-self-end">
         <ThemeSwitcher />
         <DropdownMenu>
@@ -60,5 +54,3 @@ function Topbar() {
     </div>
   );
 }
-
-export default Topbar;

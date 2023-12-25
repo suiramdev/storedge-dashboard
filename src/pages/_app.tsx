@@ -1,8 +1,8 @@
 import { ApolloProvider } from "@apollo/client";
 import { apolloClient } from "@/lib/apollo";
-import ThemeProvider from "@/components/providers/ThemeProvider";
+import { ThemeProvider } from "@/components/providers/theme";
 import { Modals } from "@generouted/react-router";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@/components/ui/sonner";
 import { Outlet } from "react-router-dom";
 
 function App() {

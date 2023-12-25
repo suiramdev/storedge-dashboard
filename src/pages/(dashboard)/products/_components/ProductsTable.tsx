@@ -14,11 +14,10 @@ import { useState } from "react";
 import { Link } from "@/router";
 import { Button } from "@/components/ui/button";
 import { CopyIcon, MoreVerticalIcon, PencilIcon, TrashIcon } from "lucide-react";
-import DataTable from "@/components/layout/DataTable";
-import DataTableColumnHeader from "@/components/layout/DataTable/DataTableColumnHeader";
+import { DataTable, DataTableColumnHeader } from "@/components/layout/data-table";
 import { Badge } from "@/components/ui/badge";
-import DeleteProductDialog from "@/components/dialogs/DeleteProductDialog";
-import DeleteProductsDialog from "@/components/dialogs/DeleteProductsDialog";
+import { DeleteProductDialog } from "@/components/dialogs/delete-product";
+import { DeleteProductsDialog } from "@/components/dialogs/delete-products";
 
 const PRODUCTS = gql`
   query Products($where: ProductWhereInput) {
@@ -137,7 +136,7 @@ const columns = [
   }),
 ];
 
-function ProductsTable() {
+export function ProductsTable() {
   const selectedStoreId = useSession((state) => state.selectedStoreId);
   const { data } = useQuery(PRODUCTS, {
     variables: {
@@ -170,5 +169,3 @@ function ProductsTable() {
     />
   );
 }
-
-export default ProductsTable;
