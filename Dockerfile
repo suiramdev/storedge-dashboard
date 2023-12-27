@@ -1,12 +1,13 @@
-FROM node:latest as build
+FROM node:16.20.2-slim AS base
 WORKDIR /app
-COPY package*.json ./
-RUN npm install
+# Faster dependency install with pnpm
+RUN npm install -g pnpm
 COPY . .
-RUN npm run build
 
-# Production stage
-FROM nginx:stable-alpine as production
-COPY --from=build /app/dist /usr/share/nginx/html
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+FROM base as build
+RUN pnpm install
+RUN pnpm run build
+
+FROM devforth/spa-to-http:latest
+WORKDIR /app
+COPY --from=build /app/dist/ .
