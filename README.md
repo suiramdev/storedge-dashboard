@@ -69,7 +69,7 @@ Start the development server with:
 pnpm dev
 ```
 
-Your dashboard will be available at `http://localhost:3000`.
+Your dashboard will be available at `http://localhost:5173`.
 
 ### Building for Production
 
