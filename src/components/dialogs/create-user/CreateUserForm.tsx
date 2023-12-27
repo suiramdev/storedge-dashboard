@@ -31,7 +31,10 @@ const CREATE_USER = gql`
 const formSchema = z
   .object({
     email: z.string().email(),
-    password: z.string().min(8, "Password must be at least 8 characters long"),
+    password: z
+      .string()
+      .min(8, "Password must be at least 8 characters long")
+      .max(72, "Password must not exceed 72 characters"),
     confirmPassword: z.string(),
     role: z.string().optional(),
   })
