@@ -1,6 +1,6 @@
 # storedge-dashboard
 
-The graphical user interface for managing the Storedge CMS. This dashboard is designed to provide a seamless administrative experience for e-commerce platforms. Built with the modern Vite.js build tool and React framework, dashboard integrates shadcn-ui components to create a simple yet effective user interface, refined from initial custom designs in Figma.
+The graphical user interface for managing the [Storedge](https://github.com/suiramdev/storedge-core) CMS. This dashboard is designed to provide a seamless administrative experience for e-commerce platforms. Built with the modern Vite.js build tool and React framework, dashboard integrates shadcn-ui components to create a simple yet effective user interface, refined from initial custom designs in Figma.
 
 ## Features
 
@@ -10,6 +10,9 @@ The graphical user interface for managing the Storedge CMS. This dashboard is de
 
 # Table of Contents
 
+- [Try the Dashboard](#try-the-dashboard)
+  - [Access the Demo](#access-the-demo)
+  - [Limited Access](#limited-access)
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
@@ -19,6 +22,23 @@ The graphical user interface for managing the Storedge CMS. This dashboard is de
 - [Design Philosophy](#design-philosophy)
 - [Contributing](#contributing)
 - [License](#license)
+
+## Try the Dashboard
+
+Get hands-on experience with the dashboard by accessing our live demo. This is a great way to familiarize yourself with the interface and features without the need to set up a local environment.
+
+### Access the Demo
+
+To explore the dashboard:
+
+1. Visit [storedge.suiram.dev](https://storedge.suiram.dev)
+2. Log in using the following demo credentials:
+   - **Email**: `demo@storedge.com`
+   - **Password**: `storedge`
+
+### Limited Access
+
+For security reasons, the demo account is view-only and modifications are not permitted. This ensures the integrity of the demo experience for all users and protects the system from any unauthorized changes. We appreciate your understanding as we strive to maintain a secure and stable demonstration environment.
 
 ## Getting Started
 
