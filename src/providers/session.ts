@@ -1,4 +1,4 @@
-import { gql, FetchResult } from "@apollo/client";
+import { gql } from "@apollo/client";
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import { apolloClient } from "@/lib/apollo";
@@ -18,19 +18,11 @@ export interface SessionTokens {
 interface SessionState {
   status: SessionStatus;
   tokens?: SessionTokens;
-  signIn: (email: string, password: string) => void;
-  signOut: () => void;
   selectedStoreId: string | null;
-  selectStore: (id: string | null) => void;
+  signIn: (email: string, password: string) => Promise<void>;
+  signOut: () => Promise<void>;
+  selectStore: (id: string | null) => Promise<void>;
 }
-
-// const SIGNED_IN = gql`
-//   query SignedIn {
-//     me {
-//       id
-//     }
-//   }
-// `;
 
 const SIGN_IN = gql`
   mutation SignIn($email: String!, $password: String!) {
@@ -48,8 +40,8 @@ const SIGN_OUT = gql`
 `;
 
 const SELECT_STORE = gql`
-  query SelectStore($where: StoreWhereUniqueInput!) {
-    store(where: $where) {
+  query SelectStore($id: String!) {
+    store(where: { id: $id }) {
       id
     }
   }
@@ -58,57 +50,63 @@ const SELECT_STORE = gql`
 export const useSession = create<SessionState>()(
   devtools(
     persist(
-      (set) => ({
+      (set, get) => ({
         status: SessionStatus.UNAUTHENTICATED,
-        tokens: undefined,
-        signIn: (email, password) => {
+        selectedStoreId: null,
+        signIn: async (email, password) => {
           set({ status: SessionStatus.LOADING });
 
-          apolloClient
-            .mutate({ mutation: SIGN_IN, variables: { email, password } })
-            .then(({ data }: FetchResult) => {
-              set({
-                tokens: {
-                  access: data?.generateToken.accessToken,
-                  refresh: data?.generateToken.refreshToken,
-                },
-                status: SessionStatus.AUTHENTICATED,
-              });
-
-              toast.success("Signed in");
-            })
-            .catch((error) => {
-              set({
-                tokens: undefined,
-                status: SessionStatus.UNAUTHENTICATED,
-              });
-
-              toast.error("Could not sign in", {
-                description: error.message,
-              });
+          try {
+            const { data } = await apolloClient.mutate({
+              mutation: SIGN_IN,
+              variables: { email, password },
             });
+
+            set({
+              tokens: {
+                access: data.generateToken.accessToken,
+                refresh: data.generateToken.refreshToken,
+              },
+              status: SessionStatus.AUTHENTICATED,
+            });
+
+            const { selectStore, selectedStoreId } = get();
+            selectStore(selectedStoreId);
+
+            toast.success("Signed in");
+          } catch (error: any) {
+            set({
+              tokens: undefined,
+              status: SessionStatus.UNAUTHENTICATED,
+            });
+
+            toast.error("Could not sign in", {
+              description: error.message,
+            });
+          }
         },
-        signOut: () => {
-          apolloClient.mutate({ mutation: SIGN_OUT });
+        signOut: async () => {
+          await apolloClient.mutate({ mutation: SIGN_OUT });
 
           set({
             tokens: undefined,
             status: SessionStatus.UNAUTHENTICATED,
           });
 
-          apolloClient.clearStore();
+          toast.success("Signed out");
         },
-        selectedStoreId: null,
-        selectStore: (id) => {
+        selectStore: async (id) => {
           if (!id) {
             set({ selectedStoreId: null });
             return;
           }
 
-          apolloClient
-            .query({ query: SELECT_STORE, variables: { where: { id } } })
-            .then(() => set({ selectedStoreId: id }))
-            .catch(() => set({ selectedStoreId: null }));
+          try {
+            const { data } = await apolloClient.query({ query: SELECT_STORE, variables: { id } });
+            set({ selectedStoreId: data.store.id });
+          } catch (error) {
+            set({ selectedStoreId: null });
+          }
         },
       }),
       { name: "session" },
