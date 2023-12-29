@@ -16,6 +16,7 @@ import {
   CommandList,
   CommandSeparator,
 } from "@/components/ui/command";
+import { Store } from "@/types";
 import { cn } from "@/lib/utils";
 import { PlusCircleIcon } from "lucide-react";
 import { CreateStoreDialog } from "@/components/dialogs/create-store";
@@ -30,22 +31,22 @@ const STORES = gql`
 `;
 
 export function StoreSwitcher() {
-  const [opened, open] = useState<boolean>(false);
-  const { selectedStoreID: selectedStoreId, selectStore } = useSession(
-    useShallow((state) => ({ selectedStoreID: state.selectedStoreId, selectStore: state.selectStore })),
-  );
+  const [open, setOpen] = useState<boolean>(false);
+  const [openCreateDialog, setOpenCreateDialog] = useState<boolean>(false);
   const { data } = useQuery(STORES);
+
+  const { selectedStoreId, selectStore } = useSession(
+    useShallow((state) => ({ selectedStoreId: state.selectedStoreId, selectStore: state.selectStore })),
+  );
 
   const selectedStore = useMemo(
     () => data?.stores.find((store: any) => store.id === selectedStoreId),
     [data, selectedStoreId],
   );
 
-  const [createStoreDialogOpened, openCreateStoreDialog] = useState<boolean>(false);
-
   return (
     <>
-      <Popover open={opened} onOpenChange={open}>
+      <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button variant="outline" role="combobox" className="max-w-[200px]">
             {selectedStore && (
@@ -69,8 +70,14 @@ export function StoreSwitcher() {
               <CommandEmpty>No stores found.</CommandEmpty>
               <CommandGroup>
                 {data &&
-                  data.stores.map((store: any) => (
-                    <CommandItem key={store.id} onSelect={() => selectStore(store.id)}>
+                  data.stores.map((store: Store) => (
+                    <CommandItem
+                      key={store.id}
+                      onSelect={() => {
+                        selectStore(store.id);
+                        setOpen(false);
+                      }}
+                    >
                       <Avatar className="mr-2 h-5 w-5">
                         <AvatarImage src={`https://avatar.vercel.sh/${store.name}.png`} />
                         <AvatarFallback>
@@ -88,8 +95,8 @@ export function StoreSwitcher() {
               <CommandGroup>
                 <CommandItem
                   onSelect={() => {
-                    openCreateStoreDialog(true);
-                    open(false);
+                    setOpenCreateDialog(true);
+                    setOpen(false);
                   }}
                 >
                   <PlusCircleIcon className="mr-2 h-5 w-5" />
@@ -100,7 +107,7 @@ export function StoreSwitcher() {
           </Command>
         </PopoverContent>
       </Popover>
-      <CreateStoreDialog open={createStoreDialogOpened} onOpenChange={openCreateStoreDialog} />
+      <CreateStoreDialog open={openCreateDialog} onOpenChange={setOpenCreateDialog} />
     </>
   );
 }

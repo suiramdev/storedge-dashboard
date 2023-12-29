@@ -25,25 +25,23 @@ const REFRESH_TOKEN = gql`
 `;
 
 const refreshToken = async () => {
-  const refreshToken = useSession.getState().tokens?.refresh;
+  const refreshToken = useSession.getState().tokens!.refresh; // In this context, we know that the refresh token is defined
 
-  const { errors, data } = await apolloClient.mutate({ mutation: REFRESH_TOKEN, variables: { refreshToken } });
+  try {
+    const { data } = await apolloClient.mutate({ mutation: REFRESH_TOKEN, variables: { refreshToken } });
 
-  if (errors) {
+    useSession.setState({
+      tokens: {
+        access: data.refreshToken.accessToken,
+        refresh: data.refreshToken.refreshToken,
+      },
+    });
+  } catch (err) {
     useSession.setState({
       tokens: undefined,
       status: SessionStatus.UNAUTHENTICATED,
     });
-
-    return;
   }
-
-  useSession.setState({
-    tokens: {
-      access: data.refreshToken.accessToken,
-      refresh: data.refreshToken.refreshToken,
-    },
-  });
 };
 
 const errorLink = onError(({ graphQLErrors, forward, operation }) => {
