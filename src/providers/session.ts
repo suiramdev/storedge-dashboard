@@ -30,11 +30,12 @@ export const useSession = create<SessionState>()(
         selectStore: async (id) => {
           if (!id) {
             set({ selectedStoreId: null });
+            console.error("Undefined ID");
             return;
           }
 
           try {
-            const { data } = await apolloClient.query({
+            await apolloClient.query({
               query: gql`
                 query SelectStore($id: String!) {
                   store(where: { id: $id }) {
@@ -44,8 +45,9 @@ export const useSession = create<SessionState>()(
               `,
               variables: { id },
             });
-            set({ selectedStoreId: data.store.id });
+            set({ selectedStoreId: id });
           } catch (error) {
+            console.error(error);
             set({ selectedStoreId: null });
           }
         },
