@@ -1,6 +1,6 @@
 import { gql, useQuery } from "@apollo/client";
 import { useSession } from "@/providers/session";
-import { useShallow } from "zustand/react/shallow";
+import { useAuth } from "@/providers/auth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Store } from "@/types";
 import { Button } from "@/components/ui/button";
@@ -19,9 +19,8 @@ const STORES = gql`
 `;
 
 function StoreSelectionPage() {
-  const { selectStore, signOut } = useSession(
-    useShallow((state) => ({ selectStore: state.selectStore, signOut: state.signOut })),
-  );
+  const selectStore = useSession((state) => state.selectStore);
+  const { signOut } = useAuth();
   const { data } = useQuery(STORES);
 
   return (

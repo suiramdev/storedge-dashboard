@@ -1,4 +1,4 @@
-import { useSession } from "@/providers/session";
+import { useAuth } from "@/providers/auth";
 import { useModals } from "@/router";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -16,13 +16,13 @@ import { Button } from "@/components/ui/button";
 import { LogOutIcon, SettingsIcon } from "lucide-react";
 
 export function Topbar() {
-  const signOut = useSession((state) => state.signOut);
+  const { signOut } = useAuth();
   const modals = useModals();
 
   return (
     <div className="grid grid-cols-3 items-center p-6">
       <StoreSwitcher />
-      <Input type="search" placeholder="Search..." className="max-w-[600px]" onClick={() => modals.open("/search")} />
+      <Input type="text" placeholder="Search..." className="max-w-[600px]" onClick={() => modals.open("/search")} />
       <div className="flex items-center space-x-2 justify-self-end">
         <ThemeSwitcher />
         <DropdownMenu>
