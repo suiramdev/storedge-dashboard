@@ -3,7 +3,7 @@ import { z } from "zod";
 import { roleModel, userModel } from "@/types";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { apolloClient } from "@/lib/apollo";
 import { Form } from "@/components/ui/form";
@@ -61,11 +61,11 @@ function AccessControlSettingsPage() {
     },
   });
 
-  const { data } = useQuery(ACCCESS_CONTROL_SETTINGS);
-
-  useEffect(() => {
-    if (data) form.reset(data);
-  }, [data]);
+  useQuery(ACCCESS_CONTROL_SETTINGS, {
+    onCompleted: (data) => {
+      form.reset(data);
+    },
+  });
 
   const [removedRoles, setRemovedRoles] = useState<string[]>([]);
   const [deleteRoles] = useMutation(DELETE_ROLES, {

@@ -29,6 +29,8 @@ const signIn = async (email: string, password: string): Promise<void> => {
         refresh: data.generateToken.refreshToken,
       },
     }));
+
+    apolloClient.resetStore();
   } catch (error) {
     useSession.setState((state) => ({
       ...state,
@@ -52,6 +54,8 @@ const signOut = async (): Promise<void> => {
     status: SessionStatus.UNAUTHENTICATED,
     tokens: undefined,
   }));
+
+  apolloClient.resetStore();
 };
 
 export const useAuth = () => ({

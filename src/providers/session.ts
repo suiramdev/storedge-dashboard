@@ -46,6 +46,7 @@ export const useSession = create<SessionState>()(
               variables: { id },
             });
             set({ selectedStoreId: id });
+            apolloClient.resetStore();
           } catch (error) {
             console.error(error);
             set({ selectedStoreId: null });
