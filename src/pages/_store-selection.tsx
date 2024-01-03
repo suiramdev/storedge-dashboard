@@ -1,11 +1,13 @@
 import { gql, useQuery } from "@apollo/client";
 import { useSession } from "@/providers/session";
+import { useAuth } from "@/providers/auth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Store } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CreateStoreDialog } from "@/components/dialogs/create-store";
-import { PlusCircleIcon } from "lucide-react";
+import { LogOutIcon, PlusCircleIcon } from "lucide-react";
 
 const STORES = gql`
   query Stores {
@@ -18,17 +20,18 @@ const STORES = gql`
 
 function StoreSelectionPage() {
   const selectStore = useSession((state) => state.selectStore);
+  const { signOut } = useAuth();
   const { data } = useQuery(STORES);
 
   return (
-    <div className="grid min-h-screen grid-cols-2">
+    <div className="grid min-h-screen md:grid-cols-2">
       <div className="flex flex-col justify-between gap-16 bg-primary-foreground p-16">
         <h1 className="text-4xl font-bold">Welcome to Storedge</h1>
         <p className="mt-2 text-xl">
           Storedge is a headless e-commerce platform with a focus on developer experience and performance.
         </p>
       </div>
-      <div className="bg-primary-background flex items-center justify-center p-8">
+      <div className="bg-primary-background flex flex-col items-center justify-center space-y-6 p-8">
         <Card className="w-[400px]">
           <CardHeader>
             <CardTitle>Select a store</CardTitle>
@@ -36,7 +39,7 @@ function StoreSelectionPage() {
           </CardHeader>
           <CardContent className="flex flex-col space-y-2">
             {data &&
-              data.stores.map((store: any) => (
+              data.stores.map((store: Store) => (
                 <Button
                   variant="outline"
                   className="justify-start"
@@ -60,6 +63,10 @@ function StoreSelectionPage() {
             </CreateStoreDialog>
           </CardContent>
         </Card>
+        <Button variant="outline" className="w-[400px]" onClick={signOut}>
+          <LogOutIcon className="mr-2 h-4 w-4" />
+          Sign out
+        </Button>
       </div>
     </div>
   );

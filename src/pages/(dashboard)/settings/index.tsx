@@ -4,7 +4,6 @@ import { CurrencyCode } from "@/types";
 import { useSession } from "@/providers/session";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -59,15 +58,14 @@ function SettingsPage() {
     },
   });
 
-  const { data } = useQuery(GENERAL_SETTINGS, {
+  useQuery(GENERAL_SETTINGS, {
     variables: {
       storeId: selectedStoreId,
     },
+    onCompleted: (data) => {
+      form.reset(data);
+    },
   });
-
-  useEffect(() => {
-    if (data) form.reset(data);
-  }, [data]);
 
   const [updateStore] = useMutation(UPDATE_STORE, {
     refetchQueries: ["GeneralSettings"],

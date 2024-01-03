@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { SessionStatus, useSession } from "@/providers/session";
-import { useShallow } from "zustand/react/shallow";
+import { useAuth } from "@/providers/auth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -22,10 +22,11 @@ function LoginPage() {
     },
   });
 
-  const { status, signIn } = useSession(useShallow((state) => ({ status: state.status, signIn: state.signIn })));
+  const status = useSession((state) => state.status);
+  const { signIn } = useAuth();
 
   return (
-    <div className="grid min-h-screen grid-cols-2">
+    <div className="grid min-h-screen md:grid-cols-2">
       <div className="flex flex-col justify-between gap-16 bg-primary-foreground p-16">
         <h1 className="text-4xl font-bold">Welcome to Storedge</h1>
         <p className="mt-2 text-xl">
